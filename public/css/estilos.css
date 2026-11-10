@@ -1,0 +1,1593 @@
+/* =====================================================================
+   VOCES DE CINE · Hoja de estilos
+   Basada en la guía de estilo del prototipo de Figma:
+   tema oscuro, violeta para las voces y las acciones, tipografía Inter.
+
+   ÍNDICE
+    1. Variables
+    2. Base
+    3. Barra de navegación y pie
+    4. Componentes comunes (textos, botones, etiquetas, secciones)
+    5. Pósters, tarjetas y cuadrículas de películas
+    6. Carrusel
+    7. Página de inicio
+    8. Catálogo: filtros y paginación
+    9. Buscador de voces
+   10. Ficha de película
+   11. Fichas de personas (actor de doblaje y actor original)
+   12. Preferencias de accesibilidad
+
+   Cada sección incluye al final sus propios ajustes para el móvil
+   (@media (max-width: 720px)).
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. VARIABLES: cambiando un valor aquí, cambia en toda la web
+   --------------------------------------------------------------------- */
+:root {
+  /* Fondos (de más oscuro a más claro) */
+  --fondo: #090911;            /* fondo de la página */
+  --navegacion: #0d0c16;       /* barra de navegación */
+  --superficie: #15141f;       /* tarjetas, paneles y campos */
+  --superficie-alta: #1c1a2a;  /* elementos encima de una superficie */
+
+  /* Texto */
+  --texto: #f5f3fa;            /* texto principal (contraste 18:1) */
+  --texto-suave: #a9a5b8;      /* texto secundario (contraste 8,3:1) */
+  --texto-claro: #dcd8e6;      /* sinopsis y textos destacados */
+
+  /* Acento: las voces, los enlaces y las acciones */
+  --violeta: #a56bee;          /* violeta principal (contraste 5,6:1) */
+  --violeta-claro: #bd8aff;    /* enlaces y estados "hover" (7,8:1) */
+  --violeta-fondo: rgba(165, 107, 238, 0.14); /* fondo suave para etiquetas */
+
+  /* Bordes */
+  --borde: #302b40;            /* separadores y bordes decorativos */
+  --borde-campo: #6e6a80;      /* contorno de campos y botones (3,5:1) */
+
+  /* Tipografía */
+  --letra: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
+
+  /* Medidas (todas múltiplos de 8 px) */
+  --ancho-max: 1200px;
+  --radio: 8px;                /* botones y campos */
+  --radio-grande: 12px;        /* tarjetas, pósters y paneles */
+  --alto-cabecera: 64px;
+}
+
+/* ---------------------------------------------------------------------
+   2. BASE
+   --------------------------------------------------------------------- */
+* {
+  box-sizing: border-box;  /* el ancho incluye el relleno y el borde */
+}
+
+body {
+  margin: 0;
+  font-family: var(--letra);
+  font-size: 1rem;         /* 16 px */
+  line-height: 1.55;
+  color: var(--texto);
+  background: var(--fondo);
+  -webkit-font-smoothing: antialiased;  /* letra más fina en fondo oscuro */
+  overflow-x: clip;        /* evita la barra horizontal que provocarían las
+                              cabeceras a todo el ancho (100vw) */
+}
+
+h1, h2, h3 {
+  line-height: 1.15;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 800; } /* 32–40 px */
+h2 { font-size: 1.5rem; font-weight: 700; }                    /* 24 px */
+
+a { color: var(--violeta-claro); }
+
+img { max-width: 100%; display: block; }
+
+/* Contorno visible al navegar con el teclado (accesibilidad) */
+:focus-visible {
+  outline: 2px solid var(--violeta-claro);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Texto solo para lectores de pantalla: no se ve, pero se lee */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Contenido centrado con un ancho máximo */
+.contenedor {
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+@media (max-width: 720px) {
+  .contenedor {
+    padding: 1.5rem 1rem 3rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   3. BARRA DE NAVEGACIÓN Y PIE
+   --------------------------------------------------------------------- */
+.cabecera {
+  position: sticky;        /* se queda fija arriba al hacer scroll */
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: var(--alto-cabecera);
+  padding: 0 max(1.5rem, calc((100% - var(--ancho-max)) / 2 + 1.5rem));
+  background: var(--navegacion);
+  border-bottom: 1px solid var(--borde);
+}
+
+/* Logotipo: icono de onda de voz + "Voces de Cine" */
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--texto);
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.marca__icono {
+  width: 28px;
+  height: 28px;
+  color: var(--violeta);
+}
+
+.marca__acento {
+  color: var(--violeta);
+}
+
+.cabecera nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.cabecera nav a,
+.cabecera__pronto {
+  color: var(--texto-suave);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.25rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.cabecera nav a:hover,
+.cabecera nav a[aria-current='page'] {
+  color: var(--texto);
+  border-bottom-color: var(--violeta);
+}
+
+/* Secciones que todavía no existen (Conexiones) */
+.cabecera__pronto {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pie {
+  border-top: 1px solid var(--borde);
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;    /* 13 px: metadatos */
+}
+
+@media (max-width: 720px) {
+  .cabecera {
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .cabecera nav {
+    gap: 1.25rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   4. COMPONENTES COMUNES
+   --------------------------------------------------------------------- */
+
+/* Título y texto de introducción de una página (catálogo, voces) */
+.portada {
+  max-width: 40rem;
+  margin-bottom: 2rem;
+}
+
+.portada p {
+  color: var(--texto-suave);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+/* Textos de estado: "Cargando…", "24 películas"... */
+.resumen {
+  color: var(--texto-suave);
+  margin: 1.5rem 0 1rem;
+}
+
+/* Mensajes de aviso y de error */
+.aviso {
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--violeta);
+  border-radius: var(--radio);
+  background: var(--superficie);
+}
+
+/* Textos de las fichas */
+.ficha__secundario {
+  color: var(--texto-suave);
+  margin: 0 0 0.5rem;
+}
+
+.ficha__sinopsis {
+  max-width: 65ch;   /* líneas de unos 65 caracteres: lectura cómoda */
+  color: var(--texto-claro);
+}
+
+/* Cada sección de una ficha, separada por una línea con brillo violeta */
+.bloque {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid transparent;
+  border-image: linear-gradient(90deg, transparent, var(--violeta), transparent) 1;
+}
+
+.bloque > h2 {
+  margin-bottom: 1.25rem;
+}
+
+/* Cabecera de sección: título a la izquierda y enlace o botón a la derecha */
+.seccion-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.seccion-cabecera h2 {
+  margin: 0;
+}
+
+.seccion-cabecera a {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.seccion-cabecera a:hover {
+  text-decoration: underline;
+}
+
+/* Botones: principal (violeta) y secundario (con borde) */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;        /* tamaño cómodo para pulsar con el dedo */
+  padding: 0.5rem 1.25rem;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 1px solid var(--violeta);
+  border-radius: var(--radio);
+  background: var(--violeta);
+  color: var(--fondo);     /* texto oscuro sobre violeta: contraste 5,6:1 */
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.boton:hover {
+  background: var(--violeta-claro);
+  border-color: var(--violeta-claro);
+}
+
+.boton--secundario {
+  background: transparent;
+  border-color: var(--borde-campo);
+  color: var(--texto);
+}
+
+.boton--secundario:hover {
+  background: var(--superficie-alta);
+  border-color: var(--violeta-claro);
+}
+
+/* Botón desactivado ("Anterior" en la página 1) o de una función que
+   todavía no existe ("Explorar conexiones") */
+.boton:disabled,
+.boton--pronto {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.boton:disabled:hover,
+.boton--pronto:hover {
+  background: transparent;
+  border-color: var(--borde-campo);
+}
+
+/* Etiquetas de género */
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.etiqueta {
+  padding: 0.2rem 0.75rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* Etiqueta pequeña en violeta, por ejemplo "Con doblaje" */
+.sello {
+  display: inline-block;
+  margin-top: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* ---------------------------------------------------------------------
+   5. PÓSTERS, TARJETAS Y CUADRÍCULAS DE PELÍCULAS
+   --------------------------------------------------------------------- */
+
+/* Póster con la proporción de un cartel de cine (2:3) */
+.poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+/* Recuadro que sustituye al póster si la película no tiene imagen */
+.poster--vacio {
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+  background: linear-gradient(160deg, var(--superficie-alta), var(--superficie));
+  border: 1px solid var(--borde);
+  color: var(--texto);
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+/* Cuadrícula de tarjetas: 4 columnas en escritorio, menos si no caben */
+.rejilla {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+/* En el móvil, columnas más estrechas */
+@media (max-width: 720px) {
+  .rejilla {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1.5rem 1rem;
+  }
+}
+
+/* Variante con tarjetas más pequeñas (de 150 a 190 px de ancho) */
+.rejilla--pequena {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 190px));
+  gap: 1.5rem;
+}
+
+/* Tarjeta de película: la tarjeta entera es un enlace */
+.tarjeta a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Al pasar el ratón, el póster se eleva un poco */
+.tarjeta .poster {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta a:hover .poster {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tarjeta a:hover .tarjeta__titulo {
+  color: var(--violeta-claro);
+}
+
+.tarjeta__titulo {
+  font-weight: 600;
+  margin-top: 0.75rem;
+  line-height: 1.3;
+}
+
+.tarjeta__dato,
+.tarjeta__extra {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* Tarjeta de personaje: el nombre del personaje es lo más visible
+   (ficha del actor de doblaje y "Una voz, muchos personajes") */
+.destacado a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.destacado__personaje {
+  margin-top: 0.75rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.destacado a:hover .destacado__personaje {
+  color: var(--violeta-claro);
+}
+
+.destacado__original {
+  color: var(--texto-claro);
+  font-size: 0.875rem;
+}
+
+.destacado__pelicula {
+  font-size: 0.875rem;
+}
+
+.destacado__detalle {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* ---------------------------------------------------------------------
+   6. CARRUSEL
+   Una fila de tarjetas con desplazamiento horizontal. Funciona sin
+   JavaScript (deslizando o con la barra); las flechas son un extra.
+   --------------------------------------------------------------------- */
+.carrusel {
+  position: relative;
+}
+
+.carrusel__pista {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 1rem;
+  display: grid;
+  grid-auto-flow: column;           /* las tarjetas van en una sola fila */
+  grid-auto-columns: 170px;         /* ancho de cada tarjeta */
+  gap: 1.25rem;
+  overflow-x: auto;                 /* se desplaza en horizontal */
+  scroll-snap-type: x mandatory;    /* al soltar, encaja en una tarjeta */
+  scrollbar-width: thin;
+  scrollbar-color: var(--borde) transparent;
+}
+
+.carrusel__pista > li {
+  scroll-snap-align: start;
+}
+
+/* Flechas a los lados, a la altura de los pósters */
+.carrusel__boton {
+  position: absolute;
+  top: 110px;
+  z-index: 1;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--borde-campo);
+  border-radius: 50%;
+  background: var(--superficie-alta);
+  color: var(--texto);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.carrusel__boton--anterior { left: -16px; }
+.carrusel__boton--siguiente { right: -16px; }
+
+.carrusel__boton:hover {
+  background: var(--violeta);
+  border-color: var(--violeta);
+  color: var(--fondo);
+}
+
+/* En el móvil se desliza con el dedo: no hacen falta las flechas */
+@media (max-width: 720px) {
+  .carrusel__boton {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   7. PÁGINA DE INICIO
+   --------------------------------------------------------------------- */
+
+/* Portada con imagen de cine a todo el ancho */
+.portada-inicio {
+  position: relative;
+  display: flex;
+  align-items: flex-end;          /* el texto va en la parte de abajo */
+  min-height: min(68vh, 560px);
+  padding: 3rem max(1.5rem, calc((100% - var(--ancho-max)) / 2 + 1.5rem)) 2rem;
+  /*
+    Tres capas, de arriba abajo:
+    1. Degradado que oscurece la parte de abajo, para que el texto se lea
+       y la imagen se funda con el fondo de la página.
+    2. La fotografía de la sala de cine (public/img/portada.jpg).
+    3. Un color de reserva por si la imagen no carga.
+  */
+  background:
+    linear-gradient(180deg, rgba(9, 9, 17, 0) 30%, rgba(9, 9, 17, 0.75) 70%, var(--fondo) 100%),
+    url('../img/portada.jpg') center 30% / cover no-repeat,
+    var(--superficie);
+}
+
+.portada-inicio__contenido {
+  max-width: 40rem;
+}
+
+.portada-inicio h1 {
+  font-size: clamp(2.25rem, 5vw, 3rem);
+  margin-bottom: 0.75rem;
+}
+
+/* Texto pequeño en violeta y mayúsculas encima del titular */
+.portada-inicio__antetitulo {
+  margin: 0 0 0.75rem;
+  color: var(--violeta-claro);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.portada-inicio__texto {
+  margin: 0 0 1.5rem;
+  color: var(--texto-claro);
+  font-size: 1.125rem;
+}
+
+.portada-inicio__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Las secciones empiezan justo debajo de la portada */
+.contenedor--inicio {
+  padding-top: 1rem;
+}
+
+/* Solo los títulos sueltos: los que van en .seccion-cabecera no llevan margen */
+.contenedor--inicio > section > h2 {
+  margin-bottom: 1.25rem;
+}
+
+/* Separación entre las secciones de la página de inicio */
+.contenedor--inicio > section + section {
+  margin-top: 4rem;
+}
+
+/* Cómo funciona: tres tarjetas en fila, numeradas automáticamente */
+.pasos__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  counter-reset: paso;            /* contador para numerar los pasos */
+}
+
+.paso {
+  position: relative;
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  counter-increment: paso;        /* cada paso suma 1 al contador */
+}
+
+/* Número del paso (1, 2, 3) en la esquina, generado por el CSS */
+.paso::after {
+  content: counter(paso);
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  color: var(--borde-campo);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.paso__icono {
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border-radius: var(--radio);
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+}
+
+.paso__titulo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.paso__texto {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.9375rem;
+}
+
+/* Una voz, muchos personajes: frase con el nombre y los personajes */
+.una-voz__frase {
+  margin: 0 0 1.5rem;
+  color: var(--texto-suave);
+  font-size: 1.25rem;
+}
+
+.una-voz__frase a {
+  color: var(--violeta-claro);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.una-voz__frase a:hover {
+  text-decoration: underline;
+}
+
+.una-voz__frase strong {
+  color: var(--texto);
+}
+/* ---------------------------------------------------------------------
+   8. CATÁLOGO: BUSCADOR, FILTROS Y PAGINACIÓN
+   --------------------------------------------------------------------- */
+.filtros {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Buscador por título, con la lupa dentro del campo */
+.filtros__busqueda {
+  position: relative;
+}
+
+.filtros__lupa {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);   /* centrada en vertical */
+  width: 20px;
+  height: 20px;
+  color: var(--texto-suave);
+  pointer-events: none;          /* los clics pasan al campo */
+}
+
+.filtros__busqueda input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0.5rem 1rem 0.5rem 3rem;   /* hueco a la izquierda para la lupa */
+  font: inherit;
+  font-size: 1.0625rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+.filtros__busqueda input::placeholder {
+  color: var(--texto-suave);
+}
+
+/* Al escribir, borde violeta y un halo suave */
+.filtros input:focus,
+.filtros select:focus {
+  border-color: var(--violeta-claro);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--violeta-fondo);
+}
+
+/* Fila de filtros: píldoras a la izquierda, orden a la derecha */
+.filtros__fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Píldora: desplegables, casilla y "Más filtros" con la misma forma */
+.pildora {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 2.25rem 0 1rem;     /* hueco a la derecha para la flecha */
+  font: inherit;
+  font-size: 0.875rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  color: var(--texto);
+  cursor: pointer;
+  /* Flecha hacia abajo dibujada en SVG y el fondo de superficie */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9a5b8' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+      right 0.75rem center / 16px no-repeat,
+    var(--superficie);
+  appearance: none;              /* quita la flecha propia del navegador */
+}
+
+.pildora:hover {
+  border-color: var(--violeta-claro);
+}
+
+/* Las opciones del desplegable, también en oscuro */
+.pildora option {
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+/* Filtro aplicado: si el desplegable NO tiene elegida la opción vacía,
+   o la casilla está marcada, la píldora se pinta en violeta.
+   :has() comprueba si un elemento contiene a otro que cumple algo. */
+select.pildora:not(:has(option[value='']:checked)),
+.pildora--casilla:has(input:checked) {
+  border-color: var(--violeta);
+  background-color: var(--violeta-fondo);
+}
+
+/* El orden siempre tiene un valor: no se marca en violeta */
+#orden.pildora {
+  border-color: var(--borde-campo);
+  background-color: var(--superficie);
+}
+
+/* La casilla no lleva flecha */
+.pildora--casilla {
+  padding-right: 1rem;
+  background-image: none;
+}
+
+.pildora--casilla input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--violeta);  /* la casilla marcada sale en violeta */
+}
+
+/* "Más filtros": la píldora es el <summary> y el panel aparece debajo */
+.filtros__mas {
+  position: relative;
+}
+
+.filtros__mas summary {
+  list-style: none;              /* quita el triángulo del navegador */
+}
+
+.filtros__mas summary::-webkit-details-marker {
+  display: none;
+}
+
+.filtros__mas[open] summary {
+  border-color: var(--violeta);
+}
+
+.filtros__panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 5;                    /* por encima de las tarjetas */
+  width: min(520px, calc(100vw - 2rem));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--superficie-alta);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+}
+
+.filtros__panel label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.filtros__panel input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+.filtros__panel .boton {
+  grid-column: 1 / -1;           /* el botón ocupa las dos columnas */
+}
+
+/* "Limpiar filtros": un botón con aspecto de enlace */
+.filtros__limpiar {
+  padding: 0.5rem;
+  border: 0;
+  background: none;
+  color: var(--violeta-claro);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filtros__limpiar:hover {
+  text-decoration: underline;
+}
+
+/* Ordenar por: a la derecha del todo */
+.filtros__orden {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;             /* empuja el bloque hacia la derecha */
+}
+
+.filtros__orden label {
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+/* Paginación: ‹ 1 … 4 5 6 … 44 › */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--borde);
+}
+
+.paginacion__boton {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 0.5rem;
+  border: 0;
+  border-radius: var(--radio);
+  background: transparent;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.paginacion__boton:hover:not(:disabled) {
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+/* Página actual: cuadrado violeta */
+.paginacion__boton[aria-current='page'] {
+  background: var(--violeta);
+  color: var(--fondo);
+  font-weight: 700;
+  cursor: default;
+}
+
+/* Flechas desactivadas (en la primera y en la última página) */
+.paginacion__boton:disabled:not([aria-current]) {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.paginacion__puntos {
+  padding: 0 0.25rem;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 720px) {
+  /* En el móvil, el orden pasa a su propia línea */
+  .filtros__orden {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .filtros__panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   9. BUSCADOR DE VOCES (voces.html; las tarjetas también en el inicio)
+   --------------------------------------------------------------------- */
+
+/* Buscador sencillo: un campo grande y el botón al lado */
+.buscador {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.buscador input {
+  flex: 1;                 /* el campo ocupa todo el espacio libre */
+  min-width: 0;            /* para que no se salga en pantallas estrechas */
+  min-height: 52px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 1.0625rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
+}
+
+.buscador input::placeholder {
+  color: var(--texto-suave);
+}
+
+.buscador input:focus {
+  border-color: var(--violeta-claro);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--violeta-fondo);
+}
+
+.buscador .boton {
+  min-height: 52px;
+}
+
+/* Cuadrícula de tarjetas de profesionales */
+.voces {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+/* Tarjeta: iniciales a la izquierda y los datos a la derecha */
+.tarjeta-voz {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+  padding: 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+/* Al pasar el ratón, el borde se vuelve violeta y la tarjeta sube un poco */
+.tarjeta-voz:hover {
+  border-color: var(--violeta);
+  transform: translateY(-2px);
+}
+
+/* Recuadro con las iniciales (en lugar de una foto) */
+.tarjeta-voz__iniciales {
+  flex-shrink: 0;          /* que no se estreche si el texto es largo */
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radio-grande);
+  background: var(--violeta-fondo);
+  border: 1px solid var(--borde);
+  color: var(--violeta-claro);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.tarjeta-voz__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.tarjeta-voz__nombre {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.tarjeta-voz:hover .tarjeta-voz__nombre {
+  color: var(--violeta-claro);
+}
+
+.tarjeta-voz__personajes {
+  color: var(--texto-claro);
+  font-size: 0.875rem;
+}
+
+.tarjeta-voz__dato {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* En el móvil, una tarjeta por fila */
+@media (max-width: 720px) {
+  .voces {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   10. FICHA DE PELÍCULA: cabecera, pestañas y reparto
+   --------------------------------------------------------------------- */
+
+/* Cabecera a todo el ancho de la ventana, con el fotograma de fondo.
+   Está dentro de .contenedor, así que los márgenes negativos la
+   "sacan" hasta los bordes de la pantalla. */
+.ficha-portada {
+  margin: -2.5rem calc(50% - 50vw) 0;
+  padding: 3rem max(1.5rem, calc((100vw - var(--ancho-max)) / 2 + 1.5rem));
+  /* Capas, de arriba abajo: oscurecido de izquierda a derecha (para leer
+     el texto), fundido con el fondo abajo, el fotograma y un color de
+     reserva por si no hay fotograma */
+  background-image:
+    linear-gradient(90deg, rgba(9, 9, 17, 0.95) 0%, rgba(9, 9, 17, 0.8) 45%, rgba(9, 9, 17, 0.45) 100%),
+    linear-gradient(0deg, var(--fondo) 0%, rgba(9, 9, 17, 0) 45%),
+    var(--fondo-imagen, none);
+  background-size: cover;
+  background-position: center 25%;
+  background-color: var(--superficie);
+}
+
+.ficha-portada__contenido {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.ficha-portada .poster {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+}
+
+.ficha-portada__datos {
+  color: var(--texto-claro);
+  margin: 0 0 1rem;
+}
+
+.ficha-portada__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Pestañas: los botones en fila, con una línea debajo */
+.pestanas {
+  margin-top: 2rem;
+  scroll-margin-top: calc(var(--alto-cabecera) + 1rem); /* para que la barra fija no la tape */
+}
+
+.pestanas__lista {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--borde);
+  overflow-x: auto;        /* en el móvil se desliza si no caben */
+}
+
+.pestanas__lista [role='tab'] {
+  padding: 0.75rem 0.5rem;
+  margin-bottom: -1px;     /* la línea violeta tapa la línea gris */
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pestanas__lista [role='tab']:hover {
+  color: var(--texto);
+}
+
+/* Pestaña abierta: texto blanco y línea violeta */
+.pestanas__lista [aria-selected='true'] {
+  color: var(--texto);
+  font-weight: 600;
+  border-bottom-color: var(--violeta);
+}
+
+/* Pestaña "Información": nombre del dato a la izquierda, valor a la derecha */
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.75rem 2rem;
+  margin: 0;
+}
+
+.datos dt {
+  color: var(--texto-suave);
+}
+
+.datos dd {
+  margin: 0;
+}
+
+/* Reparto: cada personaje es una fila */
+.reparto {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+/* Fila: [actor original]  →  [voz en castellano] */
+.reparto-fila {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.875rem 1.25rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+}
+
+/* En "Reparto original" solo hay un lado */
+.reparto-fila--simple {
+  grid-template-columns: 1fr;
+}
+
+.reparto-fila__lado {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+a.reparto-fila__lado:hover .reparto-fila__principal {
+  color: var(--violeta-claro);
+}
+
+/* Foto (o iniciales) de la persona */
+.reparto-fila__foto {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: var(--radio);
+  border: 1px solid var(--borde);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-weight: 700;
+}
+
+.reparto-fila__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Las voces, con las iniciales en violeta */
+.reparto-fila__foto--voz {
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+}
+
+.reparto-fila__textos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.reparto-fila__principal {
+  font-weight: 600;
+}
+
+.reparto-fila__secundario {
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+.reparto-fila__flecha {
+  color: var(--texto-suave);
+  font-size: 1.25rem;
+}
+
+/* Icono de onda, a la derecha del todo */
+.reparto-fila__onda {
+  width: 28px;
+  height: 28px;
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--violeta);
+}
+
+@media (max-width: 720px) {
+  .ficha-portada {
+    margin-top: -1.5rem;
+    padding: 2rem 1rem;
+  }
+
+  .ficha-portada__contenido {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .ficha-portada .poster {
+    max-width: 180px;
+  }
+
+  .pestanas__lista {
+    gap: 0.75rem;
+  }
+
+  /* En el móvil, la voz va debajo del actor original */
+  .reparto-fila {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .reparto-fila__flecha {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   11. FICHAS DE PERSONAS (actor de doblaje y actor original)
+   --------------------------------------------------------------------- */
+.ficha__persona {
+  margin-bottom: 1rem;
+}
+
+.ficha__foto {
+  width: 160px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radio-grande);
+  margin-bottom: 1.25rem;
+}
+
+/* Lista de nombres con un dato a la derecha ("Tom Hanks ...... 6 películas") */
+.lista-voces {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lista-voces a {
+  display: flex;
+  justify-content: space-between;  /* nombre a la izquierda, dato a la derecha */
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.lista-voces a:hover {
+  border-color: var(--violeta);
+}
+
+.lista-voces__nombre {
+  font-weight: 600;
+}
+
+.lista-voces__dato {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  white-space: nowrap;  /* que "6 películas" no se parta en dos líneas */
+}
+
+/* Cabecera: [retrato] [nombre y botones] [panel de datos] */
+.perfil {
+  display: grid;
+  grid-template-columns: 200px 1fr minmax(240px, 280px);
+  gap: 2.5rem;
+  align-items: center;
+}
+
+/* Retrato: como no hay fotos de los profesionales, se muestran sus
+   iniciales en grande sobre un fondo violeta suave */
+.perfil__retrato {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radio-grande);
+  border: 1px solid var(--borde);
+  background: linear-gradient(160deg, var(--violeta-fondo), var(--superficie));
+  color: var(--violeta-claro);
+  font-size: 3.5rem;
+  font-weight: 800;
+}
+
+.perfil__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+/* Icono dentro de un botón */
+.boton__icono {
+  width: 18px;
+  height: 18px;
+}
+
+/* Panel de datos: icono, valor en grande y descripción debajo */
+.panel-datos {
+  display: grid;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 1.5rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+}
+
+/* Cada fila: el icono a la izquierda ocupando las dos líneas */
+.panel-datos__fila {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  column-gap: 1rem;
+}
+
+.panel-datos__icono {
+  grid-column: 1;
+  grid-row: 1 / 3;               /* ocupa las dos líneas */
+  width: 22px;
+  height: 22px;
+  color: var(--violeta-claro);
+}
+
+/* El valor (dd) va en la primera línea y la descripción (dt) en la
+   segunda, aunque en el HTML el dt vaya antes (así lo exige <dl>) */
+.panel-datos dd {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.panel-datos dt {
+  grid-column: 2;
+  grid-row: 2;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* Personajes destacados: tarjetas con el póster arriba (de 170 a 220 px) */
+.personajes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 220px));
+  gap: 1.25rem;
+}
+
+.personaje-tarjeta {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;              /* recorta el póster a las esquinas de la tarjeta */
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.personaje-tarjeta:hover {
+  border-color: var(--violeta);
+  transform: translateY(-2px);
+}
+
+/* El póster ocupa todo el ancho, sin esquinas redondeadas propias */
+.personaje-tarjeta .poster {
+  border-radius: 0;
+  border: 0;
+}
+
+.personaje-tarjeta__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.875rem 1rem 1rem;
+}
+
+.personaje-tarjeta__nombre {
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+.personaje-tarjeta:hover .personaje-tarjeta__nombre {
+  color: var(--violeta-claro);
+}
+
+.personaje-tarjeta__detalle {
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+/* "Voz habitual de": filas con foto cuadrada, nombre y dato */
+.filas-personas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 0.75rem;
+}
+
+.fila-persona {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.875rem 1rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.fila-persona:hover {
+  border-color: var(--violeta);
+}
+
+.fila-persona__foto {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: var(--radio);
+  border: 1px solid var(--borde);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-weight: 700;
+}
+
+.fila-persona__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fila-persona__texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.fila-persona__nombre {
+  font-weight: 600;
+}
+
+.fila-persona:hover .fila-persona__nombre {
+  color: var(--violeta-claro);
+}
+
+.fila-persona__dato {
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+/* En pantallas medianas, el panel pasa debajo; en el móvil, todo en
+   una columna y el retrato más pequeño */
+@media (max-width: 960px) {
+  .perfil {
+    grid-template-columns: 160px 1fr;
+  }
+
+  .panel-datos {
+    grid-column: 1 / -1;          /* ocupa las dos columnas */
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .perfil {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .perfil__retrato {
+    width: 120px;
+    font-size: 2.25rem;
+  }
+
+  .panel-datos {
+    grid-template-columns: 1fr;
+  }
+
+  .filas-personas {
+    grid-template-columns: 1fr;
+  }
+
+  /* Dos personajes por fila */
+  .personajes {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   12. PREFERENCIAS DE ACCESIBILIDAD
+   --------------------------------------------------------------------- */
+
+/* Si el usuario ha pedido menos animaciones, se quitan las transiciones */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+
+  .carrusel__pista {
+    scroll-behavior: auto;
+  }
+}

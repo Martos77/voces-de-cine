@@ -1,0 +1,188 @@
+tmdb_id,personaje,actor_original,actor_doblaje
+
+# TOY STORY
+862, Woody, Tom Hanks, Óscar Barberán
+862, Buzz Lightyear, Tim Allen, José Luis Gil
+862, Sr. Patata, Don Rickles, Miguel Ángel Jenner
+862, Slinky, Jim Varney, Ricky Coello
+862, Rex, Wallace Shawn, Pep Sais
+862, Hamm, John Ratzenberger, Claudi García
+
+# PIRATAS DEL CARIBE
+22, Jack Sparrow, Johnny Depp, Luis Posada
+22, Capitán Barbossa, Geoffrey Rush, Mario Gas
+22, Will Turner, Orlando Bloom, Raül Llorens
+22, Elizabeth Swan, Keira Knightley, Nuria Trifol
+22,Gobernador Weatherby Swann,Jonathan Pryce,Claudi García
+22,Joshamee Gibbs,Kevin McNally,Lluís Marco
+22,Pintel,Lee Arenberg,Miquel Cors
+22,Ragetti,Mackenzie Crook,José Luis Mediavilla
+22,Anamaría,Zoe Saldaña,Mar Roca
+22,Loro del señor Cotton,Christopher S. Capp,Javier Viñas
+22,Marty,Martin Klebba,Toni Solanes
+22,Soldado Mullroy,Angus Barnett,Jesús Díez
+22,Soldado Murtogg,Giles New,José Javier Serrano
+22,Teniente Theodore Groves,Greg Ellis,Xavier Fernández
+22,Teniente Gillette,Damian O'Hare,Aleix Estadella
+22,Elizabeth Swann (niña),Lucinda Dryzek,Paula Ribó
+22,Will Turner (niño),Dylan Smith,José Antonio Torrabadella
+22,Bo'sun,Isaac C. Singleton Jr,Jordi Boixaderas
+22,Koehler,Treva Etienne,Ricky Coello
+22,Twigg,Michael Berry Jr.,Paco Gázquez
+22,Jacoby,Vince Lozano,Jaume Lleal
+22,Giselle,Vanessa Branch,Susana Macías
+22,Recaudador del muelle,Guy Siner,Francisco Alborch
+22,"Estrella, doncella",Paula J. Newman,Susana Macías
+22,Mayordomo,Paul Keith,Juan Miguel Valdivieso
+22,Prisionero,Michael Sean Tighe,Toni Solanes
+22,Sr. Brown,Ralph P. Martin,Jordi Campillo
+22,Grapple,Trevor Goddard,Javier Amilibia
+
+# LOS VENGADORES
+24428, Tony Stark / Iron Man, Robert Downey Jr., Juan Antonio Bernal
+24428, Steve Rogers / Capitán América, Chris Evans, Raül Llorens
+24428, Thor, Chris Hemsworth, Ivan Labanda
+24428, Bruce Banner, Mark Ruffalo, Xavier Fernández
+24428, Clint Barton / Ojo de Halcón, Jeremy Renner, Sergio Zamora
+24428, Natasha Romanoff / Viuda Negra, Scarlett Johansson, Joël Mulachs
+24428, Nick Furia, Samuel L. Jackson, Miguel Ángel Jenner
+24428, Loki, Tom Hiddleston, David Brau
+24428,Agente Phil Coulson,Clark Gregg,Alberto Mieza
+24428,Profesor Erik Selvig,Stellan Skarsgård,Salvador Vives
+24428,Pepper Potts,Gwyneth Paltrow,Alicia Laorden
+24428,J.A.R.V.I.S.,Paul Bettany,Víctor Iturrioz
+24428,Agente María Hill,Cobie Smulders,Cristina Mauri
+24428,Consejero,Powers Boothe,Jaume Comas
+24428,Consejera Hawley,Jenny Agutter,Margarita Ponce
+24428,El Otro,Alexis Denisof,Arsenio Corsellas
+24428,Georgi Luchkov,Jerzy Skolimowski,Yuri Mykhaylychenko
+24428,Niña india,M'laah Kaur Singh,Olivia Fernández
+24428,Niño,Michael Zhang,Rafael Calvo Suárez
+24428,Guardia de seguridad,Harry Dean Stanton,Santiago Cortés
+24428,Anciano,Kenneth Tigar,Félix Benito
+24428,Stan Lee,Stan Lee,Salvador Moreno
+24428,Agente Jasper Sitwell,Maximiliano Hernández,Pablo Gómez
+24428,Consejero mundial,Arthur Darbinyan,Salvador Moreno
+24428,Agente marcianitos,Warren Kole,Joan Palau García
+24428,Sargento de policía,Robert Clohessy,Pablo Gómez
+24428,Joven policía,Enver Gjokaj,José Claudio Ruiz
+24428,Piloto bomba atómica,Brent McGee,Hernán Fernández
+24428,Senador Boynton,James Eckhouse,Pablo Gómez
+24428,Thomas Roberts,Thomas Roberts,Joan Palau García
+24428,Camarera,Ashley Johnson,Sunna Fernández
+
+#BULLET TRAIN
+718930, Mariquita, Brad Pitt, Daniel García
+718930, Maria, Sandra Bullock, Alba Sola
+718930, Mandarina, Aaron Taylor-Johnson, Ivan Labanda
+718930, Limón, Brian Tyree Henry, Carlos Di Blasi
+718930, Kimura, Andrew Koji, Masumi Mutsuda
+718930, El Príncipe, Joey King, Laia Vidal
+
+#SPACE JAM 
+2300, Michael Jordan, Michael Jordan, Alfonso Vallés
+2300, Bugs Bunny, Billy West, Pep Antón Muñoz
+2300, Lola Bunny, Kath Soucie, Marta Tamarit
+2300, Pato Lucas, Dee Bradley Baker, Juan Antonio Bernal
+2300, Pepe Le Pew, Maurice LaMarche, Miguel Ángel Jenner
+
+#DEL REVÉS
+150540,Alegría,Amy Poehler,Mar Bordallo
+150540,Tristeza,Phyllis Smith,Beatriz Berciano
+150540,Ira,Lewis Black,Salvador Aldeguer
+150540,Miedo,Bill Hader,Fernando Cabrera
+150540,Asco,Mindy Kaling,Ana Esther Alborg
+150540,Riley Andersen,Kaitlyn Dias,Ángela Arellano
+150540,Bing Bong,Richard Kind,Carlos Ysbert
+150540,Papá,Kyle MacLachlan,Lorenzo Beteta
+150540,Mamá,Diane Lane,María del Mar Jorcano
+
+150540,Guardia Frank,Dave Goelz,Eduardo del Hoyo
+150540,Guardia Dave,Frank Oz,David García Vázquez
+150540,Ira de Papá,Pete Docter,Luis Bajo
+150540,Tristeza de Mamá,Lori Alan,María Jesús Nieto
+150540,Jangles el payaso,Josh Cooley,Juan Luis Rovira
+150540,Olvidadiza Paula,Paula Poundstone,Isabel Donate
+150540,Olvidadizo Bobby,Bobby Moynihan,Roberto González
+150540,Policía Mental Jake,Flea,Iñaki Crespo
+150540,Profesora,Dawnn Lewis,Catherina Martínez
+150540,Novio imaginario,Nick Pitera,Alejandro García (Peyo)
+150540,Fritz,John Ratzenberger,Antonio Cremades
+150540,Alegría de payaso,Peter Sagal,Eduardo Punset
+
+#NIÑOS GRANDES
+38365,Lenny Feder,Adam Sandler,José Posada
+38365,Eric Lamonsoff,Kevin James,Rafael Calvo
+38365,Kurt McKenzie,Chris Rock,José Luis Mediavilla
+38365,Marcus Higgins,David Spade,José Javier Serrano
+38365,Rob Hilliard,Rob Schneider,Alberto Mieza
+38365,Roxanne Chase-Feder,Salma Hayek Pinault,Alicia Laorden
+38365,Sally Lamonsoff,Maria Bello,María del Mar Tamarit
+38365,Deanne McKenzie,Maya Rudolph,Margarita Ponce
+38365,Mamá Ronzoni,Ebony Jo-Ann,Enriqueta Linares
+38365,Entrenador Pitido,Blake Clark,Miguel Ángel Jenner
+38365,Dickie Bailey,Colin Quinn,Domènec Farell
+38365,Robideaux,Jonathan Loughran,Alfonso Vallés
+38365,Wiley,Steve Buscemi,Gonzalo Abril
+38365,Gloria,Joyce Van Patten,Aurora García
+38365,Rita,Di Quon,Núria Domènech
+38365,Keithie Feder,Cameron Boyce,Santi Torrabadella
+38365,Greg Feder,Jake Goldberg,Pedro Torrabadella
+
+#ORIGEN
+27205,Dominic «Dom» Cobb,Leonardo DiCaprio,David Robles
+27205,Mallorie «Mal» Cobb,Marion Cotillard,Sarah Dahan
+27205,Ariadne,Elliot Page,Isabel Valls
+27205,Arthur,Joseph Gordon-Levitt,Manuel Gimeno
+27205,Eames,Tom Hardy,Eduard Itchart
+27205,Saito,Ken Watanabe,Toru Tanabe
+27205,Robert Fischer,Cillian Murphy,Roger Pera
+27205,Peter Browning,Tom Berenger,Jaume Comas
+27205,Maurice Fischer,Pete Postlethwaite,Lluís Marco
+27205,Miles,Michael Caine,Juan Miguel Cuesta
+27205,Anciano,Earl Cameron,Emilio Freixas
+27205,Agente de aduanas,Michael Gaston,Carlos Vicente
+27205,Yusuf,Dileep Rao,Pablo Gómez
+27205,Abogado,Ryan Hayward,Juan Antonio Soler
+27205,Nash,Lukas Haas,Iván Labanda
+27205,Phillipa (3 años),Claire Geare,Belén Barenys
+27205,James (3 años),Johnathan Geare,Max Bueno
+27205,Rubia,Talulah Riley,Gloria Cano
+27205,Tadashi,Tai-Li Lee,Juan Antonio Soler
+
+#JUNTOS Y REVUELTOS
+232672,Jim Friedman,Adam Sandler,José Posada
+232672,Lauren Reynolds,Drew Barrymore,Mar Bordallo
+232672,Hilary «Larry» Friedman,Bella Thorne,María Blanco
+232672,Brendan Reynolds,Braxton Beckham,Eduardo Candeira Balas
+232672,Tyler Reynolds,Kyle Red Silverstein,Álvaro Balas
+232672,Lou Friedman,Alyvia Alyn Lind,Lucía Vázquez
+232672,Espn Friedman,Emma Fuhrmann,Ángela Arellano
+232672,Jen Palmer,Wendi McLendon-Covey,Victoria Angulo
+232672,Nickens,Terry Crews,Shaikheldin El Wafir Gibril
+232672,Mfana,Abdoulaye N'Gom,Babou Cham
+232672,Ginger Warnick,Jessica Lowe,Silvia Sarmentera
+232672,Eddy Warnick,Kevin Nealon,Gonzalo Abril
+232672,Jake Warnick,Zak Henri,Miguel Antelo
+232672,Doug,Shaquille O'Neal,César Martín
+232672,Mark,Joel McHale,Fernando Cordero
+232672,Cajera parafarmacia,Mary Pat Gleason,María Jesús Varona
+232672,Tom,Allen Covert,Fernando Serna
+232672,Dale,Dale Steyn,Antonio Domínguez
+
+#DEADPOOL
+293660,Wade Wilson / Deadpool,Ryan Reynolds,José Posada
+293660,Vanessa Carlysle,Morena Baccarin,Marta Barbará
+293660,Comadreja,T.J. Miller,Hernán Fernández
+293660,Francis Freeman / Ajax,Ed Skrein,Sergio Zamora
+293660,Ángel Dust,Gina Carano,Marta Dualde
+293660,Coloso,Stefan Kapicic,Alfonso Vallés
+293660,Cabeza Nuclear Negasónica Adolescente,Brianna Hildebrand,Paula Ribó
+293660,Dopinder,Karan Soni,José Javier Serrano
+293660,Agente Smith / Reclutador,Jed Rees,Claudi Domingo
+293660,"Al, la Ciega",Leslie Uggams,María Luisa Solá
+293660,DJ Stan,Stan Lee,Salvador Moreno
+293660,Meghan Orlovsky,Taylor Hickson,Nerea Alfonso
+293660,Oncóloga,Donna Yamamoto,Laura Monedero
+293660,Gavin Merchant,Kyle Cassie,Pablo Gómez
+293660,David Cunningham,Hugh Scott,Pablo Gómez

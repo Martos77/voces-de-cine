@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Para que la página se adapte bien al móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voces · Voces de Cine</title>
+
+  <!-- Tipografía Inter (Google Fonts), la definida en la guía de estilo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Barra de navegación común a todas las páginas -->
+  <header class="cabecera">
+    <a class="marca" href="index.html">
+      <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      </svg>
+      <span>Voces <span class="marca__acento">de Cine</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <a href="catalogo.html">Películas</a>
+      <a href="voces.html" aria-current="page">Voces</a>
+      <!-- Sección que se añadirá más adelante -->
+      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <section class="portada">
+      <h1>Voces</h1>
+      <p>Busca a un actor o actriz de doblaje por su nombre, o por uno de los personajes a los que ha puesto voz.</p>
+    </section>
+
+    <!--
+      Buscador. Igual que en el catálogo, voces.js intercepta el envío,
+      guarda lo buscado en la dirección (?texto=...) y muestra los
+      resultados sin recargar la página.
+    -->
+    <form id="buscador" class="buscador" role="search">
+      <!-- La etiqueta no se ve, pero la leen los lectores de pantalla -->
+      <label for="texto" class="visualmente-oculto">Nombre del profesional o del personaje</label>
+      <input id="texto" name="texto" type="search"
+             placeholder="Por ejemplo, Óscar Barberán o Woody" autocomplete="off">
+      <button type="submit" class="boton">Buscar</button>
+    </form>
+
+    <!-- Aquí voces.js escribirá cuántas voces hay (aria-live: lo anuncian
+         los lectores de pantalla) -->
+    <p id="resumen" class="resumen" aria-live="polite">Cargando…</p>
+
+    <!-- Aquí voces.js pondrá las tarjetas de los profesionales -->
+    <ul id="resultados" class="voces"></ul>
+  </main>
+
+  <footer class="pie">
+    <!-- Atribución obligatoria según las condiciones de uso de TMDB -->
+    <p>Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</p>
+  </footer>
+
+  <script type="module" src="js/voces.js"></script>
+</body>
+</html>

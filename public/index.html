@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Para que la página se adapte bien al móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voces de Cine · Descubre películas a través del doblaje</title>
+
+  <!-- Tipografía Inter (Google Fonts), la definida en la guía de estilo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Barra de navegación común a todas las páginas -->
+  <header class="cabecera">
+    <a class="marca" href="index.html">
+      <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      </svg>
+      <span>Voces <span class="marca__acento">de Cine</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <a href="catalogo.html">Películas</a>
+      <!-- Secciones que se añadirán más adelante -->
+      <a href="voces.html">Voces</a>
+      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+    </nav>
+  </header>
+
+  <!--
+    Portada: imagen de cine a todo el ancho con el titular y dos acciones.
+    La imagen se pone desde el CSS (clase .portada-inicio), así que este
+    HTML solo contiene el texto.
+  -->
+  <section class="portada-inicio">
+    <div class="portada-inicio__contenido">
+      <p class="portada-inicio__antetitulo">Descubre el cine de otra forma</p>
+      <h1>¿Te suena esta voz?</h1>
+      <p class="portada-inicio__texto">
+        Descubre qué personajes comparten voz y encuentra películas que no conocías.
+      </p>
+      <div class="portada-inicio__acciones">
+                <a class="boton" href="voces.html">
+          Descubrir voces <span aria-hidden="true">▶</span>
+        </a>
+        <a class="boton boton--secundario" href="catalogo.html">Explorar catálogo</a>
+      </div>
+    </div>
+  </section>
+
+  <main class="contenedor contenedor--inicio">
+        <!-- Cómo funciona: tres pasos que explican la idea de la plataforma -->
+    <section class="pasos" aria-labelledby="titulo-pasos">
+      <h2 id="titulo-pasos">Cómo funciona</h2>
+      <ol class="pasos__lista">
+        <li class="paso">
+          <!-- Icono de lupa -->
+          <svg class="paso__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+          </svg>
+          <h3 class="paso__titulo">Busca una película</h3>
+          <p class="paso__texto">Encuéntrala en el catálogo o en TMDB, aunque todavía no esté en la plataforma.</p>
+        </li>
+        <li class="paso">
+          <!-- Icono de micrófono -->
+          <svg class="paso__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
+          </svg>
+          <h3 class="paso__titulo">Descubre quién pone la voz</h3>
+          <p class="paso__texto">Consulta el reparto de doblaje: cada personaje junto a su actor original y su voz en castellano.</p>
+        </li>
+        <li class="paso">
+          <!-- Icono de conexiones (tres puntos unidos) -->
+          <svg class="paso__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/>
+            <path d="M8.2 10.9l7.6-3.8M8.2 13.1l7.6 3.8"/>
+          </svg>
+          <h3 class="paso__titulo">Encuentra otras películas</h3>
+          <p class="paso__texto">Sigue a esa voz por sus otros personajes y descubre títulos que no conocías.</p>
+        </li>
+      </ol>
+    </section>
+    <section aria-labelledby="titulo-destacadas">
+      <h2 id="titulo-destacadas">Películas destacadas</h2>
+      <!-- Aquí inicio.js pondrá las tarjetas de las películas -->
+      <ul id="destacadas" class="rejilla">
+        <li class="resumen">Cargando…</li>
+      </ul>
+    </section>
+        <!-- Una voz, muchos personajes: un profesional elegido al azar y
+         varios de los personajes a los que ha puesto voz -->
+    <section aria-labelledby="titulo-una-voz" id="seccion-una-voz">
+      <div class="seccion-cabecera">
+        <h2 id="titulo-una-voz">Una voz, muchos personajes</h2>
+        <button type="button" id="otra-voz" class="boton boton--secundario">
+          Otra voz <span aria-hidden="true">↻</span>
+        </button>
+      </div>
+      <!-- Aquí inicio.js pondrá la frase y las tarjetas.
+           aria-live: al cambiar de voz, los lectores de pantalla lo anuncian -->
+      <div id="una-voz" aria-live="polite">
+        <p class="resumen">Cargando…</p>
+      </div>
+    </section>
+        <!-- Voces destacadas: los profesionales con más películas -->
+    <section aria-labelledby="titulo-voces">
+      <div class="seccion-cabecera">
+        <h2 id="titulo-voces">Voces destacadas</h2>
+        <a href="voces.html">Ver todas las voces →</a>
+      </div>
+      <!-- Aquí inicio.js pondrá las tarjetas de los profesionales -->
+      <ul id="voces-destacadas" class="voces">
+        <li class="resumen">Cargando…</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <!-- Atribución obligatoria según las condiciones de uso de TMDB -->
+    <p>Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</p>
+  </footer>
+
+  <script type="module" src="js/inicio.js"></script>
+</body>
+</html>

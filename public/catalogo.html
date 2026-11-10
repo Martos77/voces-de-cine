@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Para que la página se adapte bien al móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo · Voces de Cine</title>
+
+  <!-- Tipografía Inter (Google Fonts), la definida en la guía de estilo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Barra de navegación común a todas las páginas -->
+  <header class="cabecera">
+    <a class="marca" href="index.html">
+      <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      </svg>
+      <span>Voces <span class="marca__acento">de Cine</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <a href="catalogo.html" aria-current="page">Películas</a>
+      <a href="voces.html">Voces</a>
+      <!-- Sección que se añadirá más adelante -->
+      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <section class="portada">
+      <h1>Catálogo</h1>
+      <p>Explora películas y descubre las voces que les dan vida.</p>
+    </section>
+
+    <!--
+      Buscador y filtros.
+      No se envía de la forma tradicional: catalogo.js lo intercepta,
+      pide los datos a la API y muestra los resultados sin recargar.
+      Los desplegables y la casilla se aplican en cuanto se cambian;
+      el título, al pulsar Intro.
+      Cada campo tiene su <label> (algunas ocultas a la vista, pero
+      las leen los lectores de pantalla).
+    -->
+    <form id="filtros" class="filtros" role="search">
+      <!-- Buscador por título, con el icono de lupa dentro -->
+      <div class="filtros__busqueda">
+        <label for="texto" class="visualmente-oculto">Buscar por título</label>
+        <svg class="filtros__lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>
+        </svg>
+        <input id="texto" name="texto" type="search" placeholder="Buscar por título…">
+      </div>
+
+      <!-- Fila de filtros con forma de píldora -->
+      <div class="filtros__fila">
+        <label for="genero" class="visualmente-oculto">Género</label>
+        <select id="genero" name="genero" class="pildora">
+          <option value="">Género</option>
+          <!-- catalogo.js añade aquí los géneros -->
+        </select>
+
+        <label for="duracionMax" class="visualmente-oculto">Duración máxima</label>
+        <select id="duracionMax" name="duracionMax" class="pildora">
+          <option value="">Duración</option>
+          <option value="90">Hasta 90 min</option>
+          <option value="120">Hasta 2 h</option>
+          <option value="150">Hasta 2 h 30 min</option>
+        </select>
+
+        <label for="valoracionMin" class="visualmente-oculto">Valoración mínima</label>
+        <select id="valoracionMin" name="valoracionMin" class="pildora">
+          <option value="">Valoración</option>
+          <option value="6">6 o más</option>
+          <option value="7">7 o más</option>
+          <option value="8">8 o más</option>
+        </select>
+
+        <!-- La casilla va dentro de la etiqueta: al pulsar la píldora se marca -->
+        <label class="pildora pildora--casilla">
+          <input id="soloDoblaje" name="soloDoblaje" type="checkbox" value="1">
+          Con doblaje
+        </label>
+
+        <!-- <details> crea un panel desplegable sin necesidad de JavaScript -->
+        <details class="filtros__mas">
+          <summary class="pildora">Más filtros</summary>
+          <div class="filtros__panel">
+            <div>
+              <label for="anioDesde">Desde el año</label>
+              <input id="anioDesde" name="anioDesde" type="number" min="1900" max="2100">
+            </div>
+            <div>
+              <label for="anioHasta">Hasta el año</label>
+              <input id="anioHasta" name="anioHasta" type="number" min="1900" max="2100">
+            </div>
+            <div>
+              <label for="director">Director</label>
+              <input id="director" name="director" type="text">
+            </div>
+            <div>
+              <label for="actor">Actor o actriz original</label>
+              <input id="actor" name="actor" type="text">
+            </div>
+            <button type="submit" class="boton">Aplicar</button>
+          </div>
+        </details>
+
+        <button type="reset" class="filtros__limpiar">Limpiar filtros</button>
+
+        <!-- Ordenación, a la derecha -->
+        <div class="filtros__orden">
+          <label for="orden">Ordenar por</label>
+          <select id="orden" name="orden" class="pildora">
+            <option value="popularidad">Más populares</option>
+            <option value="valoracion">Mejor valoradas</option>
+            <option value="recientes">Más recientes</option>
+            <option value="titulo">Título</option>
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <!-- Aquí catalogo.js escribirá cuántas películas hay.
+         aria-live hace que los lectores de pantalla lo anuncien. -->
+    <p id="resumen" class="resumen" aria-live="polite">Cargando…</p>
+
+    <!-- Aquí catalogo.js pondrá las tarjetas de las películas -->
+    <ul id="resultados" class="rejilla"></ul>
+
+    <!-- Aquí catalogo.js pondrá los números de página -->
+    <nav id="paginacion" class="paginacion" aria-label="Paginación"></nav>
+
+    <!-- Resultados de TMDB: películas que aún no están en el catálogo.
+         "hidden" la oculta hasta que catalogo.js la necesite. -->
+    <section id="externos" class="bloque" hidden></section>
+  </main>
+
+  <footer class="pie">
+    <!-- Atribución obligatoria según las condiciones de uso de TMDB -->
+    <p>Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</p>
+  </footer>
+
+  <!-- type="module" permite usar import/export entre archivos JavaScript -->
+  <script type="module" src="js/catalogo.js"></script>
+</body>
+</html>
