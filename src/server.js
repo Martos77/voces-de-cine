@@ -13,6 +13,7 @@ const rutasActores = require('./routes/actores');
 const rutasGeneros = require('./routes/generos');
 const rutasTmdb = require('./routes/tmdb');
 const rutasAuth = require('./routes/auth');
+const rutasUsuario = require('./routes/usuario');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api', rutasActores); // /api/actores-doblaje/... y /api/actores-origin
 app.use('/api/generos', rutasGeneros);
 app.use('/api/tmdb', rutasTmdb);
 app.use('/api/auth', rutasAuth);
+app.use('/api/usuario', rutasUsuario);
 
 // Cualquier otra dirección de la API que no exista → error 404
 app.use('/api', (req, res) => {

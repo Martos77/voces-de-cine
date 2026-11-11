@@ -6,12 +6,15 @@
 // 3. Muestra una cabecera con el fotograma de fondo, el póster y los
 //    datos principales, y debajo tres pestañas: Información, Reparto
 //    original y Reparto de doblaje (abierta por defecto si hay voces).
-// 4. Al final, las películas que comparten voces con esta.
+// 4. Si hay sesión, botones para marcar la película como favorita,
+//    vista o pendiente, y estrellas para valorarla.
+// 5. Al final, las películas que comparten voces con esta.
 // =====================================================================
 
 import {
-  pedirApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError, iniciales,
+  pedirApi, enviarApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError, iniciales,
 } from './comun.js';
+import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
 const ficha = document.getElementById('ficha');
 
@@ -52,7 +55,7 @@ function htmlCabecera(p, hayVoces) {
 
   return `
     <header class="ficha-portada" ${fondo}>
-      <div class="ficha-portada__contenido">
+            <div class="ficha-portada__contenido">
         ${poster(p.poster_path, p.titulo, 'w500')}
         <div>
           <h1>${escapar(p.titulo)}</h1>
@@ -65,6 +68,8 @@ function htmlCabecera(p, hayVoces) {
               Explorar conexiones
             </span>
           </div>
+          <!-- Aquí se pondrán los botones del usuario (favorita, vista...) -->
+          <div class="acciones-usuario" id="acciones-usuario"></div>
         </div>
       </div>
     </header>`;
@@ -242,6 +247,119 @@ function activarPestanas() {
   });
 }
 
+// --- Acciones del usuario: favorita, vista, pendiente y valoración ---------
+
+// Botones de las acciones: [campo, texto, dibujo del icono]
+const ACCIONES = [
+  ['favorita', 'Favorita', '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>'],
+  ['vista', 'Vista', '<path d="M5 12l5 5 9-10"/>'],
+  ['pendiente', 'Pendiente', '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'],
+];
+
+/**
+ * HTML de los botones y las estrellas. Su estado (pulsado o no, cuántas
+ * estrellas) lo pone después aplicarEstado().
+ * - Los botones usan aria-pressed: un lector de pantalla anuncia
+ *   "Favorita, botón, activado" o "desactivado".
+ * - Las estrellas son botones de opción (radio) dentro de un <fieldset>:
+ *   se pueden elegir con el ratón o con las flechas del teclado.
+ */
+function htmlAcciones() {
+  const botones = ACCIONES.map(([campo, texto, dibujo]) => `
+    <button type="button" class="accion" data-campo="${campo}" aria-pressed="false">
+      <svg class="accion__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${dibujo}</svg>
+      ${texto}
+    </button>`).join('');
+
+  let estrellas = '';
+  for (let n = 1; n <= 5; n++) {
+    estrellas += `
+      <input type="radio" class="visualmente-oculto" id="estrella-${n}" name="valoracion" value="${n}">
+      <label for="estrella-${n}" title="${n} de 5">
+        <span aria-hidden="true">★</span><span class="visualmente-oculto">${n} de 5 estrellas</span>
+      </label>`;
+  }
+
+  return `
+    <div class="acciones-usuario__botones">${botones}</div>
+    <fieldset class="estrellas">
+      <legend class="estrellas__titulo">Tu valoración</legend>
+      <div class="estrellas__grupo">${estrellas}</div>
+      <button type="button" class="estrellas__quitar" data-quitar hidden>Quitar</button>
+    </fieldset>
+    <p class="acciones-usuario__error" role="alert"></p>`;
+}
+
+/**
+ * Pone en los botones y las estrellas el estado que devuelve la API.
+ * Se cambian solo los atributos (no se vuelve a escribir el HTML), para
+ * que quien use el teclado no pierda el punto en el que estaba.
+ * @param {HTMLElement} hueco
+ * @param {object} estado - { vista, favorita, pendiente, valoracion }
+ */
+function aplicarEstado(hueco, estado) {
+  for (const boton of hueco.querySelectorAll('[data-campo]')) {
+    boton.setAttribute('aria-pressed', estado[boton.dataset.campo]);
+  }
+  for (const estrella of hueco.querySelectorAll('input[name="valoracion"]')) {
+    estrella.checked = Number(estrella.value) === estado.valoracion;
+    // "llena": las estrellas hasta la valoración se pintan en violeta
+    estrella.nextElementSibling.classList.toggle('llena', Number(estrella.value) <= (estado.valoracion ?? 0));
+  }
+  hueco.querySelector('[data-quitar]').hidden = estado.valoracion === null;
+}
+
+/**
+ * Muestra las acciones del usuario en la cabecera de la ficha.
+ * Sin sesión, invita a entrar.
+ * @param {number} peliculaId
+ */
+async function cargarAccionesUsuario(peliculaId) {
+  const hueco = document.getElementById('acciones-usuario');
+  const usuario = await obtenerUsuario();
+
+  if (!usuario) {
+    hueco.innerHTML = `
+      <p class="acciones-usuario__invitacion">
+        <a href="${enlaceEntrar()}">Entra</a> para guardar esta película en favoritas, marcarla como vista o valorarla.
+      </p>`;
+    return;
+  }
+
+  const ruta = `/api/usuario/peliculas/${peliculaId}`;
+  hueco.innerHTML = htmlAcciones();
+  aplicarEstado(hueco, await pedirApi(ruta));
+
+  const error = hueco.querySelector('.acciones-usuario__error');
+
+  // Envía un cambio a la API y pone el estado que devuelve
+  async function guardar(cambios) {
+    error.textContent = '';
+    try {
+      aplicarEstado(hueco, await enviarApi(ruta, 'PUT', cambios));
+    } catch (e) {
+      error.textContent = e.message;
+    }
+  }
+
+  // Botones: cambian su campo al valor contrario (activado ↔ desactivado)
+  hueco.addEventListener('click', (evento) => {
+    const boton = evento.target.closest('[data-campo]');
+    if (boton) {
+      guardar({ [boton.dataset.campo]: boton.getAttribute('aria-pressed') !== 'true' });
+    }
+    if (evento.target.closest('[data-quitar]')) guardar({ valoracion: null });
+  });
+
+  // Estrellas: al elegir una, se guarda la valoración
+  hueco.addEventListener('change', (evento) => {
+    if (evento.target.name === 'valoracion') {
+      guardar({ valoracion: Number(evento.target.value) });
+    }
+  });
+}
+
 /**
  * Pide las películas con voces en común y añade su bloque al final
  * de la ficha. Si no hay ninguna, no se muestra nada.
@@ -314,6 +432,9 @@ async function iniciar() {
 
     ficha.innerHTML = htmlCabecera(pelicula, conVoz.length > 0) + htmlPestanas(pelicula, conVoz);
     activarPestanas();
+
+        // Botones del usuario (no hace falta esperar a que terminen)
+    cargarAccionesUsuario(pelicula.id);
 
     // Después de mostrar la ficha, cargamos las películas relacionadas
     await cargarVocesCompartidas(pelicula.id);

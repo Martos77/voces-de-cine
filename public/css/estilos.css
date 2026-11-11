@@ -1730,6 +1730,144 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
   font-size: 0.9375rem;
 }
 
+/* Acciones del usuario en la ficha de película */
+.acciones-usuario {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 2rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--borde);
+}
+
+.acciones-usuario__invitacion {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.9375rem;
+}
+
+.acciones-usuario__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Botón de acción: borde gris; activado (aria-pressed="true"), en violeta */
+.accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 999px;
+  background: rgba(9, 9, 17, 0.6);
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.accion:hover {
+  border-color: var(--violeta-claro);
+}
+
+.accion__icono {
+  width: 18px;
+  height: 18px;
+}
+
+.accion[aria-pressed='true'] {
+  border-color: var(--violeta);
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+}
+
+/* El corazón de "Favorita" se rellena al activarlo */
+.accion[data-campo='favorita'][aria-pressed='true'] .accion__icono {
+  fill: currentColor;
+}
+
+/* Valoración con estrellas */
+.estrellas {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.estrellas__titulo {
+  float: left;                   /* coloca la leyenda en la misma línea */
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+.estrellas__grupo {
+  display: flex;
+}
+
+.estrellas__grupo label {
+  padding: 0 0.1rem;
+  color: var(--borde-campo);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Estrellas de la valoración guardada */
+.estrellas__grupo label.llena {
+  color: var(--violeta-claro);
+}
+
+/* Al pasar el ratón: se iluminan la estrella señalada y las anteriores.
+   label:has(~ label:hover) = las etiquetas que tienen DESPUÉS la señalada */
+.estrellas__grupo:hover label {
+  color: var(--borde-campo);
+}
+
+.estrellas__grupo label:hover,
+.estrellas__grupo label:has(~ label:hover) {
+  color: var(--violeta-claro);
+}
+
+/* Con el teclado, el contorno de foco se ve en la estrella */
+.estrellas__grupo input:focus-visible + label {
+  outline: 2px solid var(--violeta-claro);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.estrellas__quitar {
+  padding: 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.estrellas__quitar:hover {
+  color: var(--texto);
+  text-decoration: underline;
+}
+
+.acciones-usuario__error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--error);
+  font-size: 0.875rem;
+}
+
+.acciones-usuario__error:empty {
+  display: none;
+}
+
 @media (max-width: 720px) {
   .acceso__formulario {
     padding: 1.5rem;
