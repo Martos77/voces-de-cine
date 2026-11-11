@@ -10,28 +10,20 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const usuariosModel = require('../models/usuariosModel');
-
+const { validarNombre, validarEmail, validarContrasena } = require('../utils/validacion');
 const router = express.Router();
 
 // "Coste" del cifrado: cuanto más alto, más lento es calcular el hash
 // (y más difícil probar contraseñas a ciegas). 10 es el valor habitual.
 const COSTE_BCRYPT = 10;
 
-const MIN_CONTRASENA = 8;
-const MAX_NOMBRE = 50;
-
-// Comprobación sencilla del formato del correo: algo@algo.algo
-const FORMATO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 /**
  * Comprueba los datos de registro. Devuelve un mensaje de error o null.
+ * (Las comprobaciones están en utils/validacion.js porque también las
+ * usa la edición del perfil.)
  */
 function validarRegistro({ nombre, email, contrasena }) {
-  if (!nombre) return 'Escribe tu nombre.';
-  if (nombre.length > MAX_NOMBRE) return `El nombre no puede tener más de ${MAX_NOMBRE} caracteres.`;
-  if (!FORMATO_EMAIL.test(email)) return 'Escribe un correo electrónico válido.';
-  if (contrasena.length < MIN_CONTRASENA) return `La contraseña debe tener al menos ${MIN_CONTRASENA} caracteres.`;
-  return null;
+  return validarNombre(nombre) || validarEmail(email) || validarContrasena(contrasena);
 }
 
 /**
@@ -125,5 +117,7 @@ router.get('/yo', async (req, res, next) => {
     next(error);
   }
 });
+
+module.exports.COSTE_BCRYPT = COSTE_BCRYPT;
 
 module.exports = router;

@@ -47,6 +47,7 @@
 
     /* Mensajes */
   --error: #ff6b6b;            /* errores de formularios (contraste 7,1:1) */
+    --exito: #4ade80;            /* mensajes de éxito (contraste 11:1) */
 
   /* Tipografía */
   --letra: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
@@ -1866,6 +1867,102 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 
 .acciones-usuario__error:empty {
   display: none;
+}
+
+/* Página de perfil: cabecera con la inicial grande */
+.perfil-usuario {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.perfil-usuario h1 {
+  margin: 0 0 0.25rem;
+}
+
+.perfil-usuario__inicial {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--violeta);
+  color: var(--fondo);
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+/* Número de elementos junto al título de cada lista */
+.contador {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+/* Valoración bajo la tarjeta de una película vista */
+.valoracion-texto {
+  color: var(--violeta-claro);
+  letter-spacing: 0.1em;
+}
+
+/* Iniciales de las voces en violeta */
+.fila-persona__foto--voz {
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+}
+
+/* Formularios del perfil */
+.ajustes {
+  display: grid;
+  gap: 1rem;
+  max-width: 480px;
+}
+
+.ajustes .boton {
+  justify-self: start;
+}
+
+.campo__opcional {
+  font-weight: 400;
+}
+
+.ajustes__aviso {
+  margin: 0;
+  color: var(--exito);
+  font-weight: 600;
+}
+
+.ajustes__aviso:empty {
+  display: none;
+}
+
+/* Eliminar la cuenta: plegado dentro de <details> */
+.eliminar summary {
+  cursor: pointer;
+  color: var(--error);
+  font-weight: 600;
+}
+
+.eliminar[open] summary {
+  margin-bottom: 1rem;
+}
+
+/* Botón de una acción que no se puede deshacer: en rojo */
+.boton--peligro {
+  border-color: var(--error);
+  background: var(--error);
+  color: var(--fondo);
+}
+
+.boton--peligro:hover {
+  border-color: #ff8f8f;
+  background: #ff8f8f;
 }
 
 @media (max-width: 720px) {

@@ -11,13 +11,21 @@
 //   GET    /api/usuario/voces/:id  → ¿es una voz favorita? { favorita }
 //   PUT    /api/usuario/voces/:id  → añadirla a las favoritas
 //   DELETE /api/usuario/voces/:id  → quitarla de las favoritas
+//   GET    /api/usuario/perfil     → datos, películas y voces del usuario
+//   PUT    /api/usuario/datos      → cambiar nombre, correo o contraseña
+//   DELETE /api/usuario/cuenta     → eliminar la cuenta y todos sus datos
 // =====================================================================
 
 const express = require('express');
+const bcrypt = require('bcryptjs');
 const requiereSesion = require('../middleware/requiereSesion');
 const { entero } = require('../utils/parametros');
 const usuariosPeliculasModel = require('../models/usuariosPeliculasModel');
 const usuariosVocesModel = require('../models/usuariosVocesModel');
+
+const usuariosModel = require('../models/usuariosModel');
+const { COSTE_BCRYPT } = require('./auth');
+const { validarNombre, validarEmail, validarContrasena, leerTexto } = require('../utils/validacion');
 
 const router = express.Router();
 
@@ -137,6 +145,86 @@ router.delete('/voces/:id', async (req, res, next) => {
     if (!actorId) return;
     await usuariosVocesModel.quitar(req.session.usuarioId, actorId);
     res.json({ favorita: false });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Perfil -------------------------------------------------------------
+
+// GET /api/usuario/perfil
+router.get('/perfil', async (req, res, next) =>  {
+  try {
+    const usuarioId = req.session.usuarioId;
+    // Promise.all lanza las tres consultas a la vez y espera a todas
+    const [usuario, peliculas, voces] = await Promise.all([
+      usuariosModel.obtenerPorId(usuarioId),
+      usuariosPeliculasModel.listar(usuarioId),
+      usuariosVocesModel.listar(usuarioId),
+    ]);
+    res.json({ usuario, peliculas, voces });
+  } catch (error) {
+    next(error);
+  }
+});
+
+/**
+ * Comprueba la contraseña actual del usuario de la sesión.
+ * Se pide antes de cambiar datos o eliminar la cuenta: así, si alguien
+ * encuentra la sesión abierta en otro ordenador, no puede hacerlo.
+ */
+async function contrasenaCorrecta(usuarioId, contrasena) {
+  const hash = await usuariosModel.obtenerHash(usuarioId);
+  return hash !== null && bcrypt.compare(contrasena, hash);
+}
+
+// PUT /api/usuario/datos  { nombre, email, contrasenaActual, contrasenaNueva? }
+router.put('/datos', async (req, res, next) => {
+  try {
+    const usuarioId = req.session.usuarioId;
+    const nombre = leerTexto(req.body, 'nombre');
+    const email = leerTexto(req.body, 'email').toLowerCase();
+    const contrasenaNueva = String(req.body.contrasenaNueva ?? '');
+
+    // Si la contraseña nueva está vacía, no se cambia
+    const error = validarNombre(nombre) || validarEmail(email)
+      || (contrasenaNueva && validarContrasena(contrasenaNueva));
+    if (error) return res.status(400).json({ error });
+
+    if (!await contrasenaCorrecta(usuarioId, String(req.body.contrasenaActual ?? ''))) {
+      return res.status(401).json({ error: 'La contraseña actual no es correcta.' });
+    }
+
+    const contrasenaHash = contrasenaNueva ? await bcrypt.hash(contrasenaNueva, COSTE_BCRYPT) : null;
+    try {
+      await usuariosModel.actualizar(usuarioId, { nombre, email, contrasenaHash });
+    } catch (e) {
+      if (e.code === 'ER_DUP_ENTRY') {
+        return res.status(409).json({ error: 'Ya existe otra cuenta con ese correo.' });
+      }
+      throw e;
+    }
+
+    res.json(await usuariosModel.obtenerPorId(usuarioId));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/usuario/cuenta  { contrasena }
+router.delete('/cuenta', async (req, res, next) => {
+  try {
+    const usuarioId = req.session.usuarioId;
+    if (!await contrasenaCorrecta(usuarioId, String(req.body.contrasena ?? ''))) {
+      return res.status(401).json({ error: 'La contraseña no es correcta.' });
+    }
+
+    // Se borra el usuario (y, en cascada, todos sus datos) y la sesión
+    await usuariosModel.eliminar(usuarioId);
+    req.session.destroy(() => {
+      res.clearCookie('voces.sid');
+      res.status(204).end();
+    });
   } catch (error) {
     next(error);
   }

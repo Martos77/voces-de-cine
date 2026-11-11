@@ -38,4 +38,23 @@ async function quitar(usuarioId, actorDoblajeId) {
   );
 }
 
-module.exports = { esFavorita, anadir, quitar };
+/**
+ * Voces favoritas de un usuario, con su número de películas en el
+ * catálogo, de la añadida más recientemente a la más antigua.
+ */
+async function listar(usuarioId) {
+  const [filas] = await db.query(
+    `SELECT ad.id, ad.nombre, COUNT(DISTINCT pe.pelicula_id) AS num_peliculas
+       FROM usuarios_voces uv
+       JOIN actores_doblaje ad ON ad.id = uv.actor_doblaje_id
+       LEFT JOIN doblajes d    ON d.actor_doblaje_id = ad.id
+       LEFT JOIN personajes pe ON pe.id = d.personaje_id
+      WHERE uv.usuario_id = ?
+      GROUP BY ad.id, ad.nombre, uv.creado_en
+      ORDER BY uv.creado_en DESC`,
+    [usuarioId]
+  );
+  return filas;
+}
+
+module.exports = { esFavorita, anadir, quitar, listar };

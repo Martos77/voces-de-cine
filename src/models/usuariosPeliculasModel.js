@@ -56,4 +56,22 @@ async function guardarEstado(usuarioId, peliculaId, estado) {
   );
 }
 
-module.exports = { obtenerEstado, guardarEstado };
+/**
+ * Todas las películas con las que el usuario ha hecho algo, con su
+ * estado y los datos para mostrar la tarjeta, de la más reciente a la
+ * más antigua. El perfil las reparte después en sus listas.
+ */
+async function listar(usuarioId) {
+  const [filas] = await db.query(
+    `SELECT p.id, p.titulo, p.anio, p.poster_path,
+            up.vista, up.favorita, up.pendiente, up.valoracion
+       FROM usuarios_peliculas up
+       JOIN peliculas p ON p.id = up.pelicula_id
+      WHERE up.usuario_id = ?
+      ORDER BY up.actualizado_en DESC`,
+    [usuarioId]
+  );
+  return filas.map((f) => ({ ...f, vista: !!f.vista, favorita: !!f.favorita, pendiente: !!f.pendiente }));
+}
+
+module.exports = { obtenerEstado, guardarEstado, listar };
