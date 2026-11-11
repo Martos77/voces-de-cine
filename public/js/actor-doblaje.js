@@ -13,9 +13,10 @@
 // =====================================================================
 
 import {
-  pedirApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError,
+  pedirApi, enviarApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError,
   htmlCarrusel, activarCarruseles, iniciales,
 } from './comun.js';
+import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
 const ficha = document.getElementById('ficha');
 
@@ -86,7 +87,9 @@ function htmlCabecera(actor) {
         <h1>${escapar(actor.nombre)}</h1>
         <p class="ficha__secundario">Actor o actriz de doblaje</p>
         ${actor.biografia ? `<p class="ficha__sinopsis">${escapar(actor.biografia)}</p>` : ''}
-        <div class="perfil__acciones">
+                <div class="perfil__acciones">
+          <!-- Aquí se pondrá el botón de voz favorita -->
+          <span id="voz-favorita"></span>
           <!-- Las conexiones (el grafo) se añadirán más adelante -->
           <span class="boton boton--secundario boton--pronto" aria-disabled="true" title="Próximamente">
             ${icono('conexiones', 'boton__icono')} Ver en conexiones
@@ -189,6 +192,44 @@ function htmlFilmografia(trabajos, numDestacados) {
     </section>`;
 }
 
+// Dibujo del corazón (el mismo de la ficha de película)
+const CORAZON = `
+  <svg class="accion__icono" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>
+  </svg>`;
+
+/**
+ * Botón para guardar al profesional en las voces favoritas.
+ * - Sin sesión: un enlace a la página de acceso.
+ * - Con sesión: un botón que se activa y desactiva (aria-pressed).
+ * @param {number} actorId
+ */
+async function cargarVozFavorita(actorId) {
+  const hueco = document.getElementById('voz-favorita');
+  const usuario = await obtenerUsuario();
+
+  if (!usuario) {
+    hueco.innerHTML = `<a class="accion" href="${enlaceEntrar()}">${CORAZON} Añadir a favoritas</a>`;
+    return;
+  }
+
+  const ruta = `/api/usuario/voces/${actorId}`;
+  const { favorita } = await pedirApi(ruta);
+  hueco.innerHTML = `
+    <button type="button" class="accion" data-campo="favorita" aria-pressed="${favorita}">
+      ${CORAZON} Voz favorita
+    </button>`;
+
+  const boton = hueco.querySelector('button');
+  boton.addEventListener('click', async () => {
+    const activar = boton.getAttribute('aria-pressed') !== 'true';
+    // PUT la añade y DELETE la quita; la API devuelve { favorita }
+    const respuesta = await enviarApi(ruta, activar ? 'PUT' : 'DELETE');
+    boton.setAttribute('aria-pressed', respuesta.favorita);
+  });
+}
+
 async function iniciar() {
   const id = parametroUrl('id');
   if (!id) {
@@ -208,6 +249,9 @@ async function iniciar() {
 
     // Las flechas del carrusel necesitan que ya exista su HTML
     activarCarruseles(ficha);
+    
+    // Botón de voz favorita (depende de si hay sesión)
+    cargarVozFavorita(actor.id);
   } catch (error) {
     mostrarError(ficha, error.message);
   }

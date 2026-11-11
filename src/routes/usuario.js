@@ -8,12 +8,16 @@
 //   GET /api/usuario/peliculas/:id → estado de la película para el usuario
 //   PUT /api/usuario/peliculas/:id → cambiar vista, favorita, pendiente
 //                                    o valoración (solo lo que se envíe)
+//   GET    /api/usuario/voces/:id  → ¿es una voz favorita? { favorita }
+//   PUT    /api/usuario/voces/:id  → añadirla a las favoritas
+//   DELETE /api/usuario/voces/:id  → quitarla de las favoritas
 // =====================================================================
 
 const express = require('express');
 const requiereSesion = require('../middleware/requiereSesion');
 const { entero } = require('../utils/parametros');
 const usuariosPeliculasModel = require('../models/usuariosPeliculasModel');
+const usuariosVocesModel = require('../models/usuariosVocesModel');
 
 const router = express.Router();
 
@@ -21,19 +25,19 @@ const router = express.Router();
 router.use(requiereSesion);
 
 /**
- * Lee el id de la película de la dirección. Si no es válido, responde
- * con un error 400 y devuelve null.
+ * Lee el id de la dirección (/peliculas/:id o /voces/:id). Si no es
+ * válido, responde con un error 400 y devuelve null.
  */
-function leerPeliculaId(req, res) {
+function leerId(req, res) {
   const id = entero(req.params.id);
-  if (!id) res.status(400).json({ error: 'El identificador de la película no es válido.' });
+  if (!id) res.status(400).json({ error: 'El identificador no es válido.' });
   return id;
 }
 
 // GET /api/usuario/peliculas/:id
 router.get('/peliculas/:id', async (req, res, next) => {
   try {
-    const peliculaId = leerPeliculaId(req, res);
+    const peliculaId = leerId(req, res);
     if (!peliculaId) return;
     res.json(await usuariosPeliculasModel.obtenerEstado(req.session.usuarioId, peliculaId));
   } catch (error) {
@@ -44,7 +48,7 @@ router.get('/peliculas/:id', async (req, res, next) => {
 // PUT /api/usuario/peliculas/:id  { vista?, favorita?, pendiente?, valoracion? }
 router.put('/peliculas/:id', async (req, res, next) => {
   try {
-    const peliculaId = leerPeliculaId(req, res);
+    const peliculaId = leerId(req, res);
     if (!peliculaId) return;
 
     const usuarioId = req.session.usuarioId;
@@ -88,6 +92,51 @@ router.put('/peliculas/:id', async (req, res, next) => {
     }
 
     res.json(estado);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Voces favoritas ------------------------------------------------------
+
+// GET /api/usuario/voces/:id
+router.get('/voces/:id', async (req, res, next) => {
+  try {
+    const actorId = leerId(req, res);
+    if (!actorId) return;
+    res.json({ favorita: await usuariosVocesModel.esFavorita(req.session.usuarioId, actorId) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PUT /api/usuario/voces/:id
+router.put('/voces/:id', async (req, res, next) => {
+  try {
+    const actorId = leerId(req, res);
+    if (!actorId) return;
+    try {
+      await usuariosVocesModel.anadir(req.session.usuarioId, actorId);
+    } catch (e) {
+      // El profesional no existe (falla la clave foránea)
+      if (e.code === 'ER_NO_REFERENCED_ROW_2') {
+        return res.status(404).json({ error: 'Ese profesional del doblaje no existe.' });
+      }
+      throw e;
+    }
+    res.json({ favorita: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/usuario/voces/:id
+router.delete('/voces/:id', async (req, res, next) => {
+  try {
+    const actorId = leerId(req, res);
+    if (!actorId) return;
+    await usuariosVocesModel.quitar(req.session.usuarioId, actorId);
+    res.json({ favorita: false });
   } catch (error) {
     next(error);
   }
