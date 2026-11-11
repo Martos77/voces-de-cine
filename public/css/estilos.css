@@ -45,6 +45,9 @@
   --borde: #302b40;            /* separadores y bordes decorativos */
   --borde-campo: #6e6a80;      /* contorno de campos y botones (3,5:1) */
 
+    /* Mensajes */
+  --error: #ff6b6b;            /* errores de formularios (contraste 7,1:1) */
+
   /* Tipografía */
   --letra: 'Inter', system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
 
@@ -1578,7 +1581,168 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 }
 
 /* ---------------------------------------------------------------------
-   12. PREFERENCIAS DE ACCESIBILIDAD
+   12. USUARIOS: sesión en la cabecera y página de acceso
+   --------------------------------------------------------------------- */
+
+/* Botón más pequeño (por ejemplo, "Entrar" en la cabecera) */
+.boton--pequeno {
+  min-height: 36px;
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+}
+
+/* Hueco de la sesión, a la derecha de la cabecera */
+.cabecera__sesion {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 36px;              /* reserva el sitio mientras carga */
+}
+
+.sesion__usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--texto);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sesion__usuario:hover .sesion__nombre {
+  color: var(--violeta-claro);
+}
+
+/* Círculo violeta con la inicial, como en el prototipo */
+.sesion__inicial {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--violeta);
+  color: var(--fondo);
+  font-weight: 700;
+}
+
+/* "Salir": un botón con aspecto de enlace */
+.sesion__salir {
+  padding: 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--texto-suave);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.sesion__salir:hover {
+  color: var(--texto);
+  text-decoration: underline;
+}
+
+/* Página de acceso: una tarjeta centrada */
+.acceso {
+  max-width: 440px;
+  margin: 1rem auto;
+}
+
+.acceso__formulario {
+  display: grid;
+  gap: 1rem;
+  padding: 2rem;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+}
+
+/* "hidden" debe ganar al display: grid de arriba */
+.acceso__formulario[hidden] {
+  display: none;
+}
+
+.acceso__formulario h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.acceso__formulario .boton {
+  width: 100%;
+}
+
+/* Un campo: etiqueta encima y caja de texto */
+.campo label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  border: 1px solid var(--borde-campo);
+  border-radius: var(--radio);
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+.campo input:focus {
+  border-color: var(--violeta-claro);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--violeta-fondo);
+}
+
+.campo__ayuda {
+  margin: 0.35rem 0 0;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+.acceso__privacidad {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* Mensaje de error: solo se ve si tiene texto (:empty = sin contenido) */
+.acceso__error {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--error);
+  border-radius: var(--radio);
+  background: rgba(255, 107, 107, 0.1);
+  color: var(--texto);
+  font-size: 0.9375rem;
+}
+
+.acceso__error:empty {
+  display: none;
+}
+
+.acceso__cambio {
+  margin: 0;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 720px) {
+  .acceso__formulario {
+    padding: 1.5rem;
+  }
+
+  /* En el móvil solo se ve la inicial, sin el nombre */
+  .sesion__nombre {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   13. PREFERENCIAS DE ACCESIBILIDAD
    --------------------------------------------------------------------- */
 
 /* Si el usuario ha pedido menos animaciones, se quitan las transiciones */

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Para que la página se adapte bien al móvil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · Voces de Cine</title>
+
+  <!-- Tipografía Inter (Google Fonts), la definida en la guía de estilo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Barra de navegación común a todas las páginas -->
+  <header class="cabecera">
+    <a class="marca" href="index.html">
+      <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      </svg>
+      <span>Voces <span class="marca__acento">de Cine</span></span>
+    </a>
+    <nav aria-label="Principal">
+      <a href="catalogo.html">Películas</a>
+      <a href="voces.html">Voces</a>
+      <!-- Sección que se añadirá más adelante -->
+      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <!--
+      Dos formularios en la misma página: iniciar sesión y crear cuenta.
+      Solo se ve uno a la vez ("hidden"); entrar.js cambia de uno a otro.
+    -->
+    <section class="acceso">
+
+      <!-- Iniciar sesión -->
+      <form id="form-entrar" class="acceso__formulario" novalidate>
+        <h1>Entrar</h1>
+        <p class="ficha__secundario">Guarda tus películas favoritas, márcalas como vistas y valóralas.</p>
+
+        <div class="campo">
+          <label for="entrar-email">Correo electrónico</label>
+          <input id="entrar-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="campo">
+          <label for="entrar-contrasena">Contraseña</label>
+          <input id="entrar-contrasena" name="contrasena" type="password" autocomplete="current-password" required>
+        </div>
+
+        <!-- role="alert": los lectores de pantalla leen el error en cuanto aparece -->
+        <p class="acceso__error" role="alert"></p>
+
+        <button type="submit" class="boton">Entrar</button>
+        <p class="acceso__cambio">¿No tienes cuenta? <a href="#registro" data-mostrar="registro">Crea una</a></p>
+      </form>
+
+      <!-- Crear cuenta -->
+      <form id="form-registro" class="acceso__formulario" novalidate hidden>
+        <h1>Crear cuenta</h1>
+        <p class="ficha__secundario">Solo te pedimos lo imprescindible.</p>
+
+        <div class="campo">
+          <label for="registro-nombre">Nombre</label>
+          <input id="registro-nombre" name="nombre" type="text" maxlength="50" autocomplete="given-name" required>
+        </div>
+        <div class="campo">
+          <label for="registro-email">Correo electrónico</label>
+          <input id="registro-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="campo">
+          <label for="registro-contrasena">Contraseña</label>
+          <input id="registro-contrasena" name="contrasena" type="password" minlength="8"
+                 autocomplete="new-password" aria-describedby="ayuda-contrasena" required>
+          <p class="campo__ayuda" id="ayuda-contrasena">Mínimo 8 caracteres.</p>
+        </div>
+
+        <!-- Información sobre los datos personales (RGPD) -->
+        <p class="acceso__privacidad">
+          Tu nombre y tu correo solo se usan para gestionar tu cuenta y no se comparten con nadie.
+          La contraseña se guarda cifrada. Puedes eliminar tu cuenta y todos tus datos desde tu perfil.
+        </p>
+
+        <p class="acceso__error" role="alert"></p>
+
+        <button type="submit" class="boton">Crear cuenta</button>
+        <p class="acceso__cambio">¿Ya tienes cuenta? <a href="#entrar" data-mostrar="entrar">Entra</a></p>
+      </form>
+
+    </section>
+  </main>
+
+  <footer class="pie">
+    <!-- Atribución obligatoria según las condiciones de uso de TMDB -->
+    <p>Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</p>
+  </footer>
+
+  <script type="module" src="js/entrar.js"></script>
+</body>
+</html>

@@ -5,6 +5,9 @@
 Trabajo Final de Grado · Grado en Técnicas de Interacción Digital y Multimedia (UOC)
 Área: Desarrollo Web · Autor: Eric Martos Garcia · Tutor: Mikel Zorrita Berasategui
 
+**🌐 Aplicación publicada:** https://vocesdecine.alwaysdata.net
+**💻 Código fuente:** https://github.com/Martos77/voces-de-cine
+
 ---
 
 ## Descripción
@@ -176,6 +179,15 @@ La base de datos tiene siete tablas: `peliculas`, `generos`, `peliculas_generos`
 - Consultas SQL parametrizadas y lista blanca para la ordenación (protección frente a inyección SQL).
 - Escapado del contenido antes de insertarlo en el HTML (protección frente a XSS).
 - Claves y credenciales en variables de entorno, fuera del código.
+
+## Despliegue
+
+La aplicación está publicada en [alwaysdata](https://www.alwaysdata.com) (plan gratuito), que ofrece Node.js y MariaDB (compatible con MySQL) en el mismo servicio:
+
+- **Servidor:** sitio de tipo Node.js que ejecuta `node src/server.js`. La plataforma indica la IP y el puerto mediante las variables de entorno `IP` y `PORT`.
+- **Base de datos:** MariaDB, importada a partir de `database/voces_de_cine.sql`.
+- **Configuración:** archivo `.env` en el servidor con los datos de la base de datos y la clave de TMDB (no se incluye en el repositorio).
+- **Actualización:** los cambios se suben a GitHub y se descargan en el servidor con `git pull`.
 
 ## Atribución
 

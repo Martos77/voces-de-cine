@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
+
 </head>
 <body>
   <!-- Barra de navegación común a todas las páginas -->
@@ -27,6 +28,8 @@
       <a href="voces.html">Voces</a>
       <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
     </nav>
+          <!-- Aquí sesion.js pondrá "Entrar" o el nombre del usuario -->
+    <div class="cabecera__sesion" id="sesion"></div>
   </header>
 
   <main class="contenedor">
@@ -41,5 +44,7 @@
   </footer>
 
   <script type="module" src="js/pelicula.js"></script>
+    <!-- Sesión del usuario en la cabecera (en todas las páginas) -->
+  <script type="module" src="js/sesion.js"></script>
 </body>
 </html>

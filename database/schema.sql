@@ -103,3 +103,45 @@ CREATE TABLE doblajes (
   FOREIGN KEY (personaje_id)     REFERENCES personajes(id)      ON DELETE CASCADE,
   FOREIGN KEY (actor_doblaje_id) REFERENCES actores_doblaje(id) ON DELETE CASCADE
 );
+
+-- =====================================================================
+-- USUARIOS (paso 22.1)
+-- Tres tablas nuevas para las funcionalidades de usuario (F15–F21).
+-- Se guardan solo los datos imprescindibles (RGPD): nombre, correo y
+-- la contraseña cifrada (nunca la contraseña tal cual).
+-- =====================================================================
+
+-- 1. Usuarios registrados
+CREATE TABLE IF NOT EXISTS usuarios (
+  id              INT AUTO_INCREMENT PRIMARY KEY,
+  nombre          VARCHAR(50)  NOT NULL,
+  email           VARCHAR(255) NOT NULL UNIQUE,   -- no puede haber dos cuentas con el mismo correo
+  contrasena_hash VARCHAR(255) NOT NULL,          -- la contraseña cifrada con bcrypt
+  creado_en       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Relación de cada usuario con cada película: una sola fila guarda
+--    si la ha visto, si es favorita, si la tiene pendiente y su nota.
+CREATE TABLE IF NOT EXISTS usuarios_peliculas (
+  usuario_id     INT NOT NULL,
+  pelicula_id    INT NOT NULL,
+  vista          BOOLEAN  NOT NULL DEFAULT FALSE,
+  favorita       BOOLEAN  NOT NULL DEFAULT FALSE,
+  pendiente      BOOLEAN  NOT NULL DEFAULT FALSE,
+  valoracion     TINYINT  NULL CHECK (valoracion BETWEEN 1 AND 5),  -- de 1 a 5 estrellas, o sin valorar
+  actualizado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, pelicula_id),          -- una sola fila por usuario y película
+  -- ON DELETE CASCADE: si se elimina la cuenta (o la película), se borran sus filas
+  FOREIGN KEY (usuario_id)  REFERENCES usuarios(id)  ON DELETE CASCADE,
+  FOREIGN KEY (pelicula_id) REFERENCES peliculas(id) ON DELETE CASCADE
+);
+
+-- 3. Profesionales del doblaje favoritos de cada usuario
+CREATE TABLE IF NOT EXISTS usuarios_voces (
+  usuario_id       INT NOT NULL,
+  actor_doblaje_id INT NOT NULL,
+  creado_en        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (usuario_id, actor_doblaje_id),
+  FOREIGN KEY (usuario_id)       REFERENCES usuarios(id)        ON DELETE CASCADE,
+  FOREIGN KEY (actor_doblaje_id) REFERENCES actores_doblaje(id) ON DELETE CASCADE
+);

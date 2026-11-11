@@ -3,6 +3,7 @@
 // =====================================================================
 // Las importan todas las páginas:
 //   pedirApi()        → pide datos a nuestra API
+//   enviarApi()       → envía datos a nuestra API (JSON)
 //   escapar()         → protege frente a XSS al insertar texto en la página
 //   poster()          → HTML de un póster (o de un recuadro si no hay imagen)
 //   tarjetaPelicula() → HTML de una tarjeta de película
@@ -20,11 +21,31 @@
  */
 export async function pedirApi(ruta, opciones = {}) {
   const respuesta = await fetch(ruta, opciones);
+
+  // 204 = "todo bien, sin contenido" (por ejemplo, al cerrar sesión):
+  // no hay JSON que leer
+  if (respuesta.status === 204) return null;
+
   const datos = await respuesta.json();
   if (!respuesta.ok) {
     throw new Error(datos.error || 'No se han podido cargar los datos.');
   }
   return datos;
+}
+
+/**
+ * Envía datos a la API en formato JSON (para registrarse, iniciar
+ * sesión, marcar favoritos...). Devuelve la respuesta, igual que pedirApi.
+ * @param {string} ruta - por ejemplo "/api/auth/login"
+ * @param {string} metodo - 'POST', 'PUT' o 'DELETE'
+ * @param {object} [datos] - los datos que se envían, por ejemplo { email, contrasena }
+ */
+export function enviarApi(ruta, metodo, datos) {
+  return pedirApi(ruta, {
+    method: metodo,
+    headers: datos ? { 'Content-Type': 'application/json' } : {},
+    body: datos ? JSON.stringify(datos) : undefined,
+  });
 }
 
 /**

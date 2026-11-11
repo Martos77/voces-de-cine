@@ -12,9 +12,20 @@ const rutasPeliculas = require('./routes/peliculas');
 const rutasActores = require('./routes/actores');
 const rutasGeneros = require('./routes/generos');
 const rutasTmdb = require('./routes/tmdb');
+const rutasAuth = require('./routes/auth');
 
 const app = express();
-const PUERTO = process.env.PORT || 3000;
+
+// alwaysdata recibe las visitas a través de un proxy: esto permite a
+// Express saber que la conexión original era HTTPS (para la cookie segura)
+app.set('trust proxy', 1);
+
+// Permite leer los datos que el navegador envía en formato JSON
+// (por ejemplo, el correo y la contraseña al iniciar sesión)
+app.use(express.json());
+
+// Sesiones de usuario (ver src/config/sesion.js)
+app.use(require('./config/sesion'));
 
 // --- Archivos de la web (HTML, CSS, JS e imágenes) ---
 // Cualquier archivo de la carpeta "public" se puede pedir directamente:
@@ -28,6 +39,7 @@ app.use('/api/peliculas', rutasPeliculas);
 app.use('/api', rutasActores); // /api/actores-doblaje/... y /api/actores-originales/...
 app.use('/api/generos', rutasGeneros);
 app.use('/api/tmdb', rutasTmdb);
+app.use('/api/auth', rutasAuth);
 
 // Cualquier otra dirección de la API que no exista → error 404
 app.use('/api', (req, res) => {
