@@ -4,13 +4,17 @@
 // Solo para usuarios con sesión: si no hay sesión, lleva a entrar.html.
 // Muestra, de arriba abajo:
 //   1. Cabecera: inicial, nombre, correo y fecha de alta.
-//   2. Listas: favoritas, pendientes, vistas (con su valoración) y voces
+//   2. Recomendado para ti: películas recomendadas y por qué.
+//   3. Listas: favoritas, pendientes, vistas (con su valoración) y voces
 //      favoritas. Todas salen de una sola petición a la API.
-//   3. "Tus datos": formulario para cambiar nombre, correo o contraseña.
-//   4. "Eliminar la cuenta", con todos sus datos (RGPD).
+//   4. "Tus datos": formulario para cambiar nombre, correo o contraseña.
+//   5. "Eliminar la cuenta", con todos sus datos (RGPD).
 // =====================================================================
 
-import { pedirApi, enviarApi, escapar, tarjetaPelicula, mostrarError, iniciales } from './comun.js';
+import {
+  pedirApi, enviarApi, escapar, tarjetaPelicula, mostrarError, iniciales,
+  htmlCarrusel, activarCarruseles, tarjetaRecomendada,
+} from './comun.js';
 import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
 const perfil = document.getElementById('perfil');
@@ -78,6 +82,47 @@ function htmlVoces(voces) {
       <h2>Voces favoritas <span class="contador">${voces.length}</span></h2>
       ${contenido}
     </section>`;
+}
+
+/**
+ * Hueco de la sección "Recomendado para ti". Se rellena después con
+ * cargarRecomendaciones(), para no retrasar el resto del perfil.
+ * @param {number} numPeliculas - películas favoritas o vistas
+ * @param {number} numVoces - voces favoritas
+ */
+function htmlRecomendaciones(numPeliculas, numVoces) {
+  // Explicación de en qué se basan, con sus propios números
+  const base = [];
+  if (numPeliculas > 0) base.push(numPeliculas === 1 ? '1 película favorita o vista' : `${numPeliculas} películas favoritas o vistas`);
+  if (numVoces > 0) base.push(numVoces === 1 ? '1 voz favorita' : `${numVoces} voces favoritas`);
+  const explicacion = base.length > 0
+    ? `Calculadas a partir de ${base.join(' y ')}: sus voces, sus actores y sus géneros.`
+    : 'Cuando marques películas como favoritas, las valores o guardes voces favoritas, aquí verás recomendaciones hechas para ti.';
+
+  return `
+    <section class="bloque" aria-labelledby="titulo-recomendadas">
+      <h2 id="titulo-recomendadas">Recomendado para ti</h2>
+      <p class="ficha__secundario">${explicacion}</p>
+      <div id="recomendadas"><p class="resumen">Cargando…</p></div>
+    </section>`;
+}
+
+/**
+ * Pide las recomendaciones y las pone en un carrusel.
+ */
+async function cargarRecomendaciones() {
+  const contenedor = document.getElementById('recomendadas');
+  try {
+    const { peliculas } = await pedirApi('/api/usuario/recomendaciones');
+    if (peliculas.length === 0) {
+      contenedor.innerHTML = '<p class="resumen">Ya tienes todo el catálogo en tus listas.</p>';
+      return;
+    }
+    contenedor.innerHTML = htmlCarrusel(peliculas.map(tarjetaRecomendada).join(''), 'Recomendado para ti');
+    activarCarruseles(contenedor);
+  } catch (error) {
+    mostrarError(contenedor, error.message);
+  }
 }
 
 /**
@@ -203,8 +248,9 @@ async function iniciar() {
     const pendientes = peliculas.filter((p) => p.pendiente);
     const vistas = peliculas.filter((p) => p.vista);
 
-    perfil.innerHTML =
+        perfil.innerHTML =
       htmlCabecera(usuario) +
+      htmlRecomendaciones(peliculas.filter((p) => p.favorita || p.vista).length, voces.length) +
       htmlListaPeliculas('Favoritas', favoritas,
         'Todavía no tienes películas favoritas. Pulsa «Favorita» en la ficha de una película.') +
       htmlListaPeliculas('Pendientes', pendientes,

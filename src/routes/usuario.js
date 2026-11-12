@@ -14,6 +14,7 @@
 //   GET    /api/usuario/perfil     → datos, películas y voces del usuario
 //   PUT    /api/usuario/datos      → cambiar nombre, correo o contraseña
 //   DELETE /api/usuario/cuenta     → eliminar la cuenta y todos sus datos
+//   GET    /api/usuario/recomendaciones → películas recomendadas con su motivo
 // =====================================================================
 
 const express = require('express');
@@ -22,6 +23,7 @@ const requiereSesion = require('../middleware/requiereSesion');
 const { entero } = require('../utils/parametros');
 const usuariosPeliculasModel = require('../models/usuariosPeliculasModel');
 const usuariosVocesModel = require('../models/usuariosVocesModel');
+const recomendacionesModel = require('../models/recomendacionesModel');
 
 const usuariosModel = require('../models/usuariosModel');
 const { COSTE_BCRYPT } = require('./auth');
@@ -145,6 +147,17 @@ router.delete('/voces/:id', async (req, res, next) => {
     if (!actorId) return;
     await usuariosVocesModel.quitar(req.session.usuarioId, actorId);
     res.json({ favorita: false });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Recomendaciones ----------------------------------------------------
+
+// GET /api/usuario/recomendaciones
+router.get('/recomendaciones', async (req, res, next) => {
+  try {
+    res.json(await recomendacionesModel.obtener(req.session.usuarioId));
   } catch (error) {
     next(error);
   }

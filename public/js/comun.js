@@ -189,3 +189,13 @@ export function tarjetaVoz(voz) {
       </a>
     </li>`;
 }
+
+/**
+ * Tarjeta de una película recomendada: la tarjeta normal y, debajo,
+ * el motivo de la recomendación ("Comparte la voz de...").
+ * Se usa en la página de inicio y en el perfil.
+ * @param {object} pelicula - con id, titulo, anio, poster_path y motivo
+ */
+export function tarjetaRecomendada(pelicula) {
+  return tarjetaPelicula(pelicula, `<span class="motivo">${escapar(pelicula.motivo)}</span>`);
+}

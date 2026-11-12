@@ -13,6 +13,7 @@
 
 import {
   pedirApi, enviarApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError, iniciales,
+  htmlCarrusel, activarCarruseles,
 } from './comun.js';
 import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
@@ -130,19 +131,39 @@ function htmlInformacion(p) {
 }
 
 /**
- * Pestaña "Reparto original": todos los personajes con su actor original.
+ * Pestaña "Reparto original": carrusel horizontal con la foto de cada
+ * actor, su nombre y su personaje. Se recorre con las flechas o
+ * deslizando (el mismo carrusel de la filmografía).
  */
 function htmlRepartoOriginal(reparto) {
   if (reparto.length === 0) {
     return '<p class="aviso">No hay información sobre el reparto de esta película.</p>';
   }
-  const filas = reparto.map((r) => `<li class="reparto-fila reparto-fila--simple">${htmlLadoOriginal(r)}</li>`).join('');
-  return `<ol class="reparto">${filas}</ol>`;
+
+  const tarjetas = reparto.map((r) => {
+    const foto = r.actor_original_foto
+      ? `<img src="${IMAGENES_TMDB}w185${escapar(r.actor_original_foto)}" alt="" loading="lazy">`
+      : `<span aria-hidden="true">${escapar(iniciales(r.actor_original || r.personaje))}</span>`;
+    const contenido = `
+      <span class="tarjeta-reparto__foto">${foto}</span>
+      <span class="tarjeta-reparto__actor">${escapar(r.actor_original || 'Actor desconocido')}</span>
+      <span class="tarjeta-reparto__personaje">${escapar(r.personaje)}</span>`;
+    // Si conocemos al actor, la tarjeta es un enlace a su ficha
+    return r.actor_original_id
+      ? `<li><a class="tarjeta-reparto" href="actor-original.html?id=${r.actor_original_id}">${contenido}</a></li>`
+      : `<li><span class="tarjeta-reparto">${contenido}</span></li>`;
+  }).join('');
+
+  return `<div class="carrusel-reparto">${htmlCarrusel(tarjetas, 'Reparto original')}</div>`;
 }
+
+// Número de personajes que se ven a la vez en "Reparto de doblaje"
+const POR_PAGINA_REPARTO = 8;
 
 /**
  * Pestaña "Reparto de doblaje": cada personaje con su actor original
- * y, al otro lado de la flecha, su voz en castellano.
+ * y, al otro lado de la flecha, su voz en castellano. Se muestran de 8
+ * en 8, en dos columnas, con flechas para ver los siguientes.
  * @param {Array} conVoz - personajes con voz registrada
  * @param {number} sinVoz - cuántos personajes no tienen voz registrada
  */
@@ -164,14 +185,78 @@ function htmlRepartoDoblaje(conVoz, sinVoz) {
       </a>
     </li>`).join('');
 
+  // Las flechas solo hacen falta si hay más de una página
+  const controles = conVoz.length > POR_PAGINA_REPARTO
+    ? `<div class="reparto-paginas">
+         <button type="button" class="reparto-paginas__boton" data-reparto="-1" aria-label="Personajes anteriores">&#8249;</button>
+         <span class="reparto-paginas__texto" aria-live="polite"></span>
+         <button type="button" class="reparto-paginas__boton" data-reparto="1" aria-label="Personajes siguientes">&#8250;</button>
+       </div>`
+    : '';
+
   const nota = sinVoz > 0
     ? `<p class="ficha__secundario">Hay ${sinVoz === 1 ? '1 personaje más' : `${sinVoz} personajes más`} sin voz registrada. Puedes verlos en «Reparto original».</p>`
     : '';
 
   return `
-    <h2>Reparto de doblaje (castellano)</h2>
-    <ol class="reparto">${filas}</ol>
+    <div class="seccion-cabecera">
+      <h2>Reparto de doblaje (castellano)</h2>
+      ${controles}
+    </div>
+    <ol class="reparto reparto--doble" id="lista-doblaje">${filas}</ol>
     ${nota}`;
+}
+
+/**
+ * Hace que funcionen las flechas del reparto de doblaje: muestra los
+ * personajes de la página actual (de 8 en 8) y oculta los demás.
+ */
+function activarPaginasReparto() {
+  const lista = document.getElementById('lista-doblaje');
+  const controles = ficha.querySelector('.reparto-paginas');
+  if (!lista || !controles) return;   // sin doblaje, o caben en una página
+
+  const filas = [...lista.children];
+  const totalPaginas = Math.ceil(filas.length / POR_PAGINA_REPARTO);
+  let pagina = 0;
+
+    /**
+   * @param {number} direccion - 1 si se avanza, -1 si se retrocede,
+   *                             0 al cargar la página (sin animación)
+   */
+  function mostrarPagina(direccion = 0) {
+    // Math.floor(i / 8) es la página en la que está cada fila: 0, 0... 1, 1...
+    filas.forEach((fila, i) => {
+      fila.hidden = Math.floor(i / POR_PAGINA_REPARTO) !== pagina;
+      // Posición dentro de su página (0 a 7), para que entren una detrás de otra
+      fila.style.setProperty('--orden', i % POR_PAGINA_REPARTO);
+    });
+    const desde = pagina * POR_PAGINA_REPARTO + 1;
+    const hasta = Math.min(desde + POR_PAGINA_REPARTO - 1, filas.length);
+    controles.querySelector('.reparto-paginas__texto').textContent = `${desde}–${hasta} de ${filas.length}`;
+    controles.querySelector('[data-reparto="-1"]').disabled = pagina === 0;
+    controles.querySelector('[data-reparto="1"]').disabled = pagina === totalPaginas - 1;
+
+    if (direccion !== 0) {
+      // Las filas entran por el lado hacia el que se avanza
+      lista.dataset.direccion = direccion > 0 ? 'siguiente' : 'anterior';
+      // Para repetir una animación CSS hay que quitar la clase, obligar
+      // al navegador a "darse cuenta" (leer offsetWidth) y volver a ponerla
+      lista.classList.remove('reparto--animando');
+      void lista.offsetWidth;
+      lista.classList.add('reparto--animando');
+    }
+  }
+
+  controles.addEventListener('click', (evento) => {
+    const boton = evento.target.closest('[data-reparto]');
+    if (!boton) return;
+    const direccion = Number(boton.dataset.reparto);
+    pagina += direccion;
+    mostrarPagina(direccion);
+  });
+
+  mostrarPagina();
 }
 
 /**
@@ -432,6 +517,8 @@ async function iniciar() {
 
     ficha.innerHTML = htmlCabecera(pelicula, conVoz.length > 0) + htmlPestanas(pelicula, conVoz);
     activarPestanas();
+    activarCarruseles(ficha);    // flechas del reparto original
+    activarPaginasReparto();     // flechas del reparto de doblaje
 
         // Botones del usuario (no hace falta esperar a que terminen)
     cargarAccionesUsuario(pelicula.id);

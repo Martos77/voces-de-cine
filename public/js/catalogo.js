@@ -116,7 +116,7 @@ async function cargarExternos(textoBuscado) {
     externos.innerHTML = `
       <h2>Más resultados en TMDB</h2>
       <p class="ficha__secundario">Estas películas aún no están en el catálogo. Al abrir una, se añadirá automáticamente.</p>
-      <ul class="rejilla">${nuevas.map(tarjetaExterna).join('')}</ul>`;
+      <ul class="rejilla rejilla--catalogo">${nuevas.map(tarjetaExterna).join('')}</ul>`;
   } catch (error) {
     mostrarError(externos, error.message);
   }

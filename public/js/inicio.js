@@ -7,8 +7,11 @@
 // misma del catálogo con el filtro "soloDoblaje".
 // =====================================================================
 
-   import { pedirApi, tarjetaPelicula, tarjetaVoz, mostrarError, escapar, poster } from './comun.js';
-
+  import {
+  pedirApi, tarjetaPelicula, tarjetaVoz, mostrarError, escapar, poster,
+  htmlCarrusel, activarCarruseles, tarjetaRecomendada,
+} from './comun.js';
+import { obtenerUsuario } from './sesion.js';
 // Número de películas que se muestran (una fila de 4 en escritorio)
 const NUM_DESTACADAS = 4;
    // Número de voces destacadas (dos filas de 3 en escritorio)
@@ -144,7 +147,42 @@ async function iniciarUnaVoz() {
 // Botón "Otra voz"
 document.getElementById('otra-voz').addEventListener('click', mostrarOtraVoz);
 
+// --- Recomendado para ti -----------------------------------------------
+
+/**
+ * Si el usuario ha iniciado sesión, muestra sus recomendaciones en un
+ * carrusel. Sin sesión, la sección sigue oculta.
+ */
+async function cargarRecomendadas() {
+  const usuario = await obtenerUsuario();
+  if (!usuario) return;
+
+  const seccion = document.getElementById('seccion-recomendadas');
+  const contenedor = document.getElementById('recomendadas');
+  seccion.hidden = false;
+  contenedor.innerHTML = '<p class="resumen">Cargando…</p>';
+
+  try {
+    const datos = await pedirApi('/api/usuario/recomendaciones');
+
+    // Sin historial: se explica cómo conseguir recomendaciones propias
+    document.getElementById('aviso-recomendadas').hidden = datos.personalizadas;
+
+    if (datos.peliculas.length === 0) {
+      contenedor.innerHTML = '<p class="resumen">Ya tienes todo el catálogo en tus listas.</p>';
+      return;
+    }
+
+    const tarjetas = datos.peliculas.map(tarjetaRecomendada).join('');
+    contenedor.innerHTML = htmlCarrusel(tarjetas, 'Recomendado para ti');
+    activarCarruseles(contenedor);
+  } catch (error) {
+    mostrarError(contenedor, error.message);
+  }
+}
+
 // --- Inicio -------------------------------------------------------------
+cargarRecomendadas();
 cargarDestacadas();
 iniciarUnaVoz();
 cargarVocesDestacadas();

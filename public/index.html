@@ -89,6 +89,20 @@
         </li>
       </ol>
     </section>
+        <!-- Recomendado para ti: solo con la sesión iniciada.
+         Está oculta (hidden) hasta que inicio.js sepa quién es el usuario -->
+    <section aria-labelledby="titulo-recomendadas" id="seccion-recomendadas" hidden>
+      <div class="seccion-cabecera">
+        <h2 id="titulo-recomendadas">Recomendado para ti</h2>
+        <a href="perfil.html">Ir a tu perfil →</a>
+      </div>
+      <p class="ficha__secundario" id="aviso-recomendadas" hidden>
+        Marca películas como favoritas o valóralas y aquí verás recomendaciones
+        según sus voces, sus actores y sus géneros. Mientras, te dejamos las más populares.
+      </p>
+      <!-- Aquí inicio.js pondrá el carrusel -->
+      <div id="recomendadas"></div>
+    </section>
     <section aria-labelledby="titulo-destacadas">
       <h2 id="titulo-destacadas">Películas destacadas</h2>
       <!-- Aquí inicio.js pondrá las tarjetas de las películas -->

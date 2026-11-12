@@ -7,6 +7,18 @@ tmdb_id,personaje,actor_original,actor_doblaje
 862, Slinky, Jim Varney, Ricky Coello
 862, Rex, Wallace Shawn, Pep Sais
 862, Hamm, John Ratzenberger, Claudi García
+862, Bo Peep, Annie Potts, María Moscardó
+862, Andy Davis, John Morris, Nacho Aldeguer
+862, Sid Phillips, Erik von Detten, David Jenner
+862, Hannah Phillips, Sarah Rayne, Michelle Jenner
+862, Sra. Davis, Laurie Metcalf, Rosa María Hernández
+862, Sargento, R. Lee Ermey, Lluís Marco
+862, Anunciante, Penn Jillette, Pepe Antequera
+862, Lenny, Joe Ranft, Toni Solanes
+862, Tiburón, Andrew Stanton, Antonio Lara
+862, Sr. ABC, Jeff Pidgeon, Miguel Rey
+862, Soldado herido, Bill Farmer, Xavier Fernández
+
 
 # PIRATAS DEL CARIBE
 22, Jack Sparrow, Johnny Depp, Luis Posada
@@ -74,17 +86,38 @@ tmdb_id,personaje,actor_original,actor_doblaje
 #BULLET TRAIN
 718930, Mariquita, Brad Pitt, Daniel García
 718930, Maria, Sandra Bullock, Alba Sola
-718930, Mandarina, Aaron Taylor-Johnson, Ivan Labanda
+718930, Mandarina, Aaron Taylor-Johnson, Iván Labanda
 718930, Limón, Brian Tyree Henry, Carlos Di Blasi
 718930, Kimura, Andrew Koji, Masumi Mutsuda
 718930, El Príncipe, Joey King, Laia Vidal
+718930, El Hijo, Logan Lerman, Sergio Olmo
+718930, El Lobo, Bad Bunny, Roberto Peralta
+718930, El Viejo, Hiroyuki Sanada, Paco Gázquez
+718930, El Aguijón, Zazie Beetz, Carla Mercader
+718930, La Peste Blanca, Michael Shannon, Francesc Orella
+718930, Revisor del tren, Masi Oka, Andy Fukutome
+718930, Alexei Ilyin, Pasha Lychnikoff, Yuri Mykhaylychenko
+718930, Pasajero señuelo, Channing Tatum, Juan Logar Jr.
 
 #SPACE JAM 
 2300, Michael Jordan, Michael Jordan, Alfonso Vallés
+2300, Stan Podolak, Wayne Knight, Rafale Calvo
 2300, Bugs Bunny, Billy West, Pep Antón Muñoz
 2300, Lola Bunny, Kath Soucie, Marta Tamarit
 2300, Pato Lucas, Dee Bradley Baker, Juan Antonio Bernal
 2300, Pepe Le Pew, Maurice LaMarche, Miguel Ángel Jenner
+2300, Yosemite Sam, Bill Farmer, Joan Crosas
+2300, Gallo Claudio, Bill Farmer, Jordi Royo
+2300, Silvestre, Bill Farmer, Jordi Royo
+2300, Porky, Bob Bergen, Alberto Mieza
+2300, Piolín, Bob Bergen, Ana Pallejà
+2300, Abuelita, June Foray, Alicia Laorden
+2300, James Jordan, Thom Barry, Miguel Ángel Jenner
+2300, Larry Johnson, Larry Johnson, Jordi Boixaderas
+2300, Patrick Ewing, Patrick Ewing, Juan Carlos Gustems
+2300, Shawn Bradley, Shawn Bradley, José Posada
+2300, Larry Bird, Larry Bird, Salvador Vives
+2300, Bill Murray, Bill Murray, Manolo García
 
 #DEL REVÉS
 150540,Alegría,Amy Poehler,Mar Bordallo
@@ -186,3 +219,68 @@ tmdb_id,personaje,actor_original,actor_doblaje
 293660,Oncóloga,Donna Yamamoto,Laura Monedero
 293660,Gavin Merchant,Kyle Cassie,Pablo Gómez
 293660,David Cunningham,Hugh Scott,Pablo Gómez
+
+#EL REY LEÓN (1994)
+8587, Simba, Matthew Broderick, Sergio Zamora
+8587, Joven Simba, Jonathan Taylor Thomas, Marc Pociello
+8587, Nala, Moira Kelly, Marta Barbarà
+8587, Joven Nala, Niketa Calame-Harris, Graciela Molina
+8587, Mufasa, James Earl Jones, Constantino Romero
+8587, Scar, Jeremy Irons, Ricardo Solans
+8587, Timón, Nathan Lane, Alberto Mieza
+8587, Pumba, Ernie Sabella, Miguel Ángel Jenner
+8587, Rafiki, Robert Guillaume, Juan Fernández
+8587, Shenzi, Whoopi Goldberg, María Dolores Gispert
+8587, Banzai, Cheech Marin, Antonio García Moral
+8587, Zazú, Rowan Atkinson, Eduard Doncos
+8587, Sarabi, Madge Sinclair, Mercedes Montalá
+8587, Sarafina, Zoe Leader, María Luisa Solá
+
+#MALDITOS BASTARDOS
+16869, Teniente Aldo Raine, Brad Pitt, Daniel García
+16869, Shoshanna Dreyfus, Mélanie Laurent, Joël Mulachs
+16869, Coronel Hans Landa, Christoph Waltz, Pep Antón Muñoz
+16869, Sargento Donny Donowitz, Eli Roth, Jordi Pons
+16869, Teniente Archie Hicox, Michael Fassbender, José Posada
+16869, Bridget von Hammersmark, Diane Kruger, Alba Sola
+16869, Fredrick Zoller, Daniel Brühl, Daniel Brühl
+16869, Marcel, Jacky Ido, Jordi Ribes
+16869, Francesca Mondino, Julie Dreyfus, Alicia Laorden
+16869, Cabo Wilhelm Wicki, Gedeon Burkhard, Ricky Coello
+16869, General Ed Fenech, Mike Myers, Rafael Calvo
+16869, Perrier LaPadite, Denis Ménochet, Carlos Di Blasi
+16869, Sargento Werner Rachtman, Richard Sammel, Domènec Farell
+16869, Narrador, Samuel L. Jackson, Miguel Ángel Jenner
+16869, Winston Churchill, Rod Taylor, Joaquín Díaz
+16869, Sargento Hugo Stiglitz, Til Schweiger, Manuel Gimeno
+16869, Soldado Omar Ulmer, Omar Doom, Juan Antonio Soler
+16869, Soldado Smithson Utivich, B.J. Novak, Xavier Fernández
+16869, Mayor Dieter Hellstrom, August Diehl, Toni Mora
+16869, Comandante de la OSS (voz), Harvey Keitel, Camilo García
+16869, Sargento Wilhelm, Alexander Fehling, Dani Albiac
+16869, Eric el barman, Christian Berkel, José Antonio Jiménez
+16869, Soldado Hirschberg, Samm Levine, Rafael Parra
+
+#TITANIC
+597, Jack Dawson, Leonardo DiCaprio, Luis Posada
+597, Rose DeWitt Bukater, Kate Winslet, Nuria Mediavilla
+597, Caledon Hockley, Billy Zane, Salvador Vidal
+597, Ruth DeWitt Bukater, Frances Fisher, María Luisa Solá
+597, Rose Dawson Calvert, Gloria Stuart, Marta Martorell
+597, Brock Lovett, Bill Paxton, Antonio Lara
+597, Lizzy Calvert, Suzy Amis, Concha García Valero
+597, Fabrizio De Rossi, Danny Nucci, Daniel García
+597, Spicer Lovejoy, David Warner, Joaquín Díaz
+597, Tommy Ryan, Jason Barry, Rafael Calvo
+597, Molly Brown, Kathy Bates, María Dolores Gispert
+597, Thomas Andrews, Victor Garber, Salvador Vives
+597, Capitán Edward John Smith, Bernard Hill, Josep Maria Ullod
+597, Joseph Bruce Ismay, Jonathan Hyde, Juan Carlos Gustems
+597, Coronel John Jacob Astor IV, Eric Braeden, Josep Maria Zamora
+597, Coronel Archibald Gracie IV, Bernard Fox, Pepe Mediavilla
+597, Benjamin Guggenheim, Michael Ensign, Eduardo Muntada
+597, Violinista Wallace Hartley, Jonathan Evans-Jones, Pepe Antequera
+597, Primer oficial William Murdoch, Ewan Stewart, Antonio García Moral
+597, Segundo oficial Charles Lightoller, Jonny Phillips, Ricky Coello
+597, Oficial jefe Henry Wilde, Mark Lindsay Chapman, Gonzalo Abril
+597, Quinto oficial Harold Lowe, Ioan Gruffudd, Óscar Barberán

@@ -81,13 +81,23 @@ function leerCsv(ruta) {
 /**
  * Busca el personaje de la fila del CSV dentro de la película.
  * Se busca por el ACTOR ORIGINAL, porque el nombre del personaje en el
- * CSV está en español y en TMDB en inglés. Si ese actor hace varios
- * papeles en la película, se desempata por el nombre del personaje.
+ * CSV está en español y en TMDB en inglés.
+ *
+ * Caso especial: un actor con VARIOS PAPELES en la película (por
+ * ejemplo, Bob Bergen es Porky y Piolín en Space Jam). TMDB suele
+ * juntarlos en una sola entrada ("Porky Pig / Tweety"). Para que cada
+ * papel tenga su voz, el primero usa esa entrada y los demás se crean
+ * como personajes nuevos del mismo actor.
+ *
+ * @param {number} peliculaId
+ * @param {object} fila - fila del CSV
+ * @param {Set} nombresDelActor - nombres (normalizados) de todos los
+ *        personajes de ese actor en esta película según el CSV
  * @returns {object|null} el personaje, o null si no se encuentra
  */
-async function buscarPersonaje(peliculaId, fila) {
+async function buscarPersonaje(peliculaId, fila, nombresDelActor) {
   const [personajes] = await db.query(
-    `SELECT pe.id, pe.nombre, ao.nombre AS actor_original
+    `SELECT pe.id, pe.nombre, pe.actor_original_id, pe.orden, ao.nombre AS actor_original
        FROM personajes pe
        JOIN actores_originales ao ON ao.id = pe.actor_original_id
       WHERE pe.pelicula_id = ?`,
@@ -97,9 +107,29 @@ async function buscarPersonaje(peliculaId, fila) {
   const delActor = personajes.filter(
     (p) => normalizar(p.actor_original) === normalizar(fila.actorOriginal)
   );
+  if (delActor.length === 0) return null;
 
-  if (delActor.length === 1) return delActor[0];
-  return delActor.find((p) => normalizar(p.nombre) === normalizar(fila.personaje)) || null;
+  // 1. Si ya hay un personaje suyo con el nombre del CSV, es ese
+  //    (pasa, por ejemplo, al importar por segunda vez)
+  const exacto = delActor.find((p) => normalizar(p.nombre) === normalizar(fila.personaje));
+  if (exacto) return exacto;
+
+  // 2. Un solo papel en el CSV: si sale una vez en TMDB, es ese personaje
+  if (nombresDelActor.size <= 1) {
+    return delActor.length === 1 ? delActor[0] : null;
+  }
+
+  // 3. Varios papeles en el CSV:
+  //    a) se usa una entrada de TMDB que aún no tenga uno de sus nombres del CSV
+  const libre = delActor.find((p) => !nombresDelActor.has(normalizar(p.nombre)));
+  if (libre) return libre;
+
+  //    b) si no queda ninguna, se crea un personaje nuevo del mismo actor
+  const [resultado] = await db.query(
+    'INSERT INTO personajes (pelicula_id, nombre, actor_original_id, orden) VALUES (?, ?, ?, ?)',
+    [peliculaId, fila.personaje || 'Sin nombre', delActor[0].actor_original_id, delActor[0].orden]
+  );
+  return { id: resultado.insertId, nombre: fila.personaje };
 }
 
 /**
@@ -163,8 +193,18 @@ async function main() {
         peliculaId = await guardarPelicula(tmdbId, actoresCsv);
       }
 
-            for (const fila of filasPelicula) {
-        const personaje = await buscarPersonaje(peliculaId, fila);
+      // Nombres de los personajes de cada actor en esta película, según el
+      // CSV. Si un actor tiene más de uno, hace varios papeles.
+      const nombresPorActor = new Map();
+      for (const fila of filasPelicula) {
+        const actor = normalizar(fila.actorOriginal);
+        if (!nombresPorActor.has(actor)) nombresPorActor.set(actor, new Set());
+        nombresPorActor.get(actor).add(normalizar(fila.personaje));
+      }
+
+      for (const fila of filasPelicula) {
+        const nombresDelActor = nombresPorActor.get(normalizar(fila.actorOriginal));
+        const personaje = await buscarPersonaje(peliculaId, fila, nombresDelActor);
         if (!personaje) {
           const aviso = existente && !actualizar
             ? `  No se encuentra a "${fila.actorOriginal}" en TMDB ${tmdbId}. Si lo acabas de añadir al CSV, ejecuta: npm run importar -- --actualizar`

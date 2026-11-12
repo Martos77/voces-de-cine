@@ -406,6 +406,50 @@ img { max-width: 100%; display: block; }
   }
 }
 
+/* Variante para el catálogo: tarjetas medianas, 6 por fila en
+   escritorio y 3 en el móvil */
+.rejilla--catalogo {
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.75rem 1.25rem;
+}
+
+.rejilla--catalogo .tarjeta__titulo {
+  font-size: 0.9375rem;
+}
+
+@media (max-width: 720px) {
+  .rejilla--catalogo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem 0.75rem;
+  }
+}
+
+/* Variante con tarjetas muy pequeñas: al menos 8 por fila en escritorio
+   (ficha del actor original) */
+.rejilla--mini {
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1.5rem 1rem;
+}
+
+.rejilla--mini .tarjeta__titulo {
+  font-size: 0.875rem;
+}
+
+.rejilla--mini .poster--vacio,
+.rejilla--catalogo .poster--vacio,
+.personaje-tarjeta .poster--vacio {
+  padding: 0.6rem;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;       /* que un título largo no se salga */
+}
+
+@media (max-width: 720px) {
+  .rejilla--mini {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem 0.75rem;
+  }
+}
+
 /* Variante con tarjetas más pequeñas (de 150 a 190 px de ancho) */
 .rejilla--pequena {
   grid-template-columns: repeat(auto-fill, minmax(150px, 190px));
@@ -445,6 +489,15 @@ img { max-width: 100%; display: block; }
 .tarjeta__extra {
   color: var(--texto-suave);
   font-size: 0.8125rem;
+}
+
+/* Motivo de una recomendación, debajo del año ("Comparte la voz de...") */
+.motivo {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--violeta-claro);
+  font-size: 0.8125rem;
+  line-height: 1.35;
 }
 
 /* Tarjeta de personaje: el nombre del personaje es lo más visible
@@ -1261,6 +1314,139 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
   color: var(--violeta);
 }
 
+/* Reparto de doblaje en dos columnas (de 8 en 8) */
+.reparto--doble {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* Las filas ocultas de otras páginas: "hidden" gana al display: grid */
+.reparto-fila[hidden] {
+  display: none;
+}
+
+/* Flechas y "1–8 de 15" junto al título del reparto de doblaje */
+.reparto-paginas {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Flechas redondas, con el mismo aspecto que las del carrusel */
+.reparto-paginas__boton {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--borde-campo);
+  border-radius: 50%;
+  background: var(--superficie-alta);
+  color: var(--texto);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.reparto-paginas__boton:hover:not(:disabled) {
+  background: var(--violeta);
+  border-color: var(--violeta);
+  color: var(--fondo);
+}
+
+/* En la primera y en la última página, la flecha que no sirve */
+.reparto-paginas__boton:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.reparto-paginas__texto {
+  min-width: 5.5rem;
+  text-align: center;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+/* Animación al cambiar de página: las filas entran deslizándose desde
+   el lado hacia el que se avanza, una detrás de otra (--orden lo pone
+   pelicula.js: 0 para la primera fila de la página, 1 para la segunda...) */
+.reparto--animando .reparto-fila {
+  animation: reparto-entrar-derecha 0.35s ease-out both;
+  animation-delay: calc(var(--orden, 0) * 35ms);
+}
+
+.reparto--animando[data-direccion="anterior"] .reparto-fila {
+  animation-name: reparto-entrar-izquierda;
+}
+
+@keyframes reparto-entrar-derecha {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+@keyframes reparto-entrar-izquierda {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+}
+
+/* Reparto original: carrusel de tarjetas con foto */
+.carrusel-reparto .carrusel__pista {
+  grid-auto-columns: 140px;        /* tarjetas más estrechas que las de películas */
+}
+
+.carrusel-reparto .carrusel__boton {
+  top: 85px;                       /* a media altura de la foto */
+}
+
+.tarjeta-reparto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Foto del actor en proporción de retrato (2:3) */
+.tarjeta-reparto__foto {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 3;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  border-radius: var(--radio-grande);
+  border: 1px solid var(--borde);
+  background: var(--superficie-alta);
+  color: var(--texto-suave);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.tarjeta-reparto__foto img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tarjeta-reparto__actor {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  line-height: 1.25;
+}
+
+a.tarjeta-reparto:hover .tarjeta-reparto__actor {
+  color: var(--violeta-claro);
+}
+
+a.tarjeta-reparto:hover .tarjeta-reparto__foto {
+  border-color: var(--violeta);
+}
+
+.tarjeta-reparto__personaje {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  line-height: 1.3;
+}
+
 @media (max-width: 720px) {
   .ficha-portada {
     margin-top: -1.5rem;
@@ -1278,6 +1464,11 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 
   .pestanas__lista {
     gap: 0.75rem;
+  }
+
+  /* En el móvil, una sola columna */
+  .reparto--doble {
+    grid-template-columns: 1fr;
   }
 
   /* En el móvil, la voz va debajo del actor original */
@@ -1422,14 +1613,14 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
   font-size: 0.8125rem;
 }
 
-/* Personajes destacados: tarjetas con el póster arriba (de 170 a 220 px) */
+/* Personajes destacados: tarjetas pequeñas, al menos 8 por fila en escritorio */
 .personajes {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(170px, 220px));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
 }
 
 .personaje-tarjeta {
@@ -1459,13 +1650,14 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 .personaje-tarjeta__texto {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  padding: 0.875rem 1rem 1rem;
+  gap: 0.1rem;
+  padding: 0.625rem 0.75rem 0.75rem;
 }
 
 .personaje-tarjeta__nombre {
   font-weight: 700;
-  font-size: 1.0625rem;
+  font-size: 0.9375rem;
+  line-height: 1.25;
 }
 
 .personaje-tarjeta:hover .personaje-tarjeta__nombre {
@@ -1474,7 +1666,8 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 
 .personaje-tarjeta__detalle {
   color: var(--texto-suave);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+  line-height: 1.3;
 }
 
 /* "Voz habitual de": filas con foto cuadrada, nombre y dato */
@@ -1525,6 +1718,7 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 }
 
 .fila-persona__texto {
+  flex: 1;                       /* ocupa el resto de la fila (para la barra) */
   display: flex;
   flex-direction: column;
 }
@@ -1540,6 +1734,96 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 .fila-persona__dato {
   color: var(--texto-suave);
   font-size: 0.875rem;
+}
+
+/* Actor original: su foto real en lugar de las iniciales */
+.perfil__retrato--foto {
+  width: 100%;
+  object-fit: cover;
+}
+
+/* "Su voz habitual en castellano", destacada en la cabecera */
+.voz-principal {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 34rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--violeta-fondo);
+  border: 1px solid var(--violeta-fondo);
+  border-radius: var(--radio-grande);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+
+.voz-principal:hover {
+  border-color: var(--violeta);
+}
+
+/* Círculo violeta con las iniciales de la voz */
+.voz-principal__retrato {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--violeta);
+  color: var(--fondo);
+  font-weight: 800;
+}
+
+.voz-principal__texto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.voz-principal__etiqueta {
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.voz-principal__nombre {
+  color: var(--violeta-claro);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.voz-principal__dato {
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+/* Iniciales de las voces: en círculo y en violeta */
+.fila-persona__foto--voz {
+  border-radius: 50%;
+  border-color: var(--violeta-fondo);
+  background: var(--violeta-fondo);
+  color: var(--violeta-claro);
+}
+
+/* Barra con la parte de sus doblajes que ha hecho cada voz */
+.barra {
+  display: block;
+  height: 6px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--superficie-alta);
+}
+
+.barra span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--violeta);
 }
 
 /* En pantallas medianas, el panel pasa debajo; en el móvil, todo en
@@ -1574,9 +1858,9 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
     grid-template-columns: 1fr;
   }
 
-  /* Dos personajes por fila */
+  /* Tres personajes por fila */
   .personajes {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
   }
 }
@@ -1984,6 +2268,7 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+    animation: none !important;
   }
 
   .carrusel__pista {
