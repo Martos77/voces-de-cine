@@ -3,6 +3,7 @@
 // =====================================================================
 
 const db = require('../config/db');
+const { normalizar } = require('../services/importacion');
 
 // Id del género "Animación" en TMDB. En las películas de animación lo
 // importante es el personaje, no el actor original que lo interpreta.
@@ -25,6 +26,55 @@ function ordenarPorRelevancia(trabajos) {
     if (aPrincipal !== bPrincipal) return bPrincipal - aPrincipal;
     return (b.popularidad || 0) - (a.popularidad || 0);
   });
+}
+
+// Palabras que no sirven para saber si dos personajes son el mismo
+// (cargos y tratamientos: "Agente", "Coronel"...). Sin tildes.
+const PALABRAS_COMUNES = new Set([
+  'agente', 'coronel', 'capitan', 'comandante', 'general', 'sargento', 'teniente',
+  'profesor', 'profesora', 'doctor', 'doctora', 'inspector', 'oficial', 'presidente',
+  'senor', 'senora', 'joven', 'nino', 'nina', 'anciano', 'anciana',
+]);
+
+/**
+ * Palabras importantes del nombre de un personaje: sin tildes, de 4
+ * letras o más y sin cargos. "Coronel Nick Furia" → ['nick', 'furia']
+ */
+function palabrasClave(nombre) {
+  return normalizar(nombre)
+    .split(/[^a-z0-9]+/)
+    .filter((palabra) => palabra.length >= 4 && !PALABRAS_COMUNES.has(palabra));
+}
+
+/**
+ * ¿Son el mismo personaje en dos películas distintas? Lo son si los
+ * interpreta el mismo actor original y sus nombres comparten alguna
+ * palabra importante. Así se juntan "Nick Furia" y "Coronel Nick Furia",
+ * pero no "Narrador" y "Nick Furia" (los dos de Samuel L. Jackson).
+ */
+function mismoPersonaje(a, b) {
+  if (!a.actor_original_id || a.actor_original_id !== b.actor_original_id) return false;
+  const claves = new Set(palabrasClave(a.personaje));
+  return palabrasClave(b.personaje).some((palabra) => claves.has(palabra));
+}
+
+/**
+ * Junta los personajes que se repiten en varias películas (por ejemplo,
+ * Tony Stark en las tres de Iron Man). Se queda con el primero de cada
+ * uno (el más relevante, porque la lista ya viene ordenada) y le añade
+ * num_peliculas: en cuántas películas le ha puesto voz.
+ */
+function agruparPersonajes(trabajos) {
+  const grupos = [];
+  for (const trabajo of trabajos) {
+    const grupo = grupos.find((g) => mismoPersonaje(g, trabajo));
+    if (grupo) {
+      grupo.num_peliculas++;
+    } else {
+      grupos.push({ ...trabajo, num_peliculas: 1 });
+    }
+  }
+  return grupos;
 }
 
 /**
@@ -82,8 +132,9 @@ async function obtenerPorId(id) {
     [id, GENERO_ANIMACION, NUM_HABITUALES]
   );
 
-  // 4. Personajes destacados: los más relevantes según ordenarPorRelevancia()
-  const destacados = ordenarPorRelevancia(trabajos).slice(0, NUM_DESTACADOS);
+    // 4. Personajes destacados: los más relevantes según ordenarPorRelevancia().
+  //    Cada personaje sale una sola vez, aunque lo haya doblado en varias películas
+  const destacados = agruparPersonajes(ordenarPorRelevancia(trabajos)).slice(0, NUM_DESTACADOS);
 
   return { ...actor, destacados, habituales, trabajos };
 }
@@ -95,8 +146,40 @@ async function obtenerPorId(id) {
 // Máximo de profesionales que devuelve una búsqueda
 const MAX_RESULTADOS = 60;
 
-// Cuántos personajes se muestran en cada tarjeta ("Woody · Arthur · ...")
+// Cuántos nombres se muestran en cada tarjeta ("Robert Downey Jr. · Michael Shannon")
 const NUM_CONOCIDO_POR = 3;
+
+/**
+ * Lo que se muestra de cada trabajo en la tarjeta de una voz:
+ * el ACTOR ORIGINAL al que dobla o, en animación (o si no se conoce
+ * el actor), el PERSONAJE. Es el mismo criterio que en su ficha.
+ */
+function etiqueta(trabajo) {
+  return trabajo.es_animacion || !trabajo.actor_original
+    ? trabajo.personaje
+    : trabajo.actor_original;
+}
+
+/**
+ * Los nombres que más se repiten en sus trabajos, sin repetir ninguno.
+ * Primero los que más veces ha doblado; si empatan, el más relevante
+ * (la lista llega ordenada por ordenarPorRelevancia).
+ * Ejemplo (Juan Antonio Bernal): Robert Downey Jr. (3) · Michael Shannon (1) · Pato Lucas (1)
+ */
+function masDoblados(trabajos) {
+  const veces = new Map();   // nombre normalizado → { nombre, veces, posicion }
+  trabajos.forEach((t, posicion) => {
+    const nombre = etiqueta(t);
+    const clave = normalizar(nombre);
+    if (!veces.has(clave)) veces.set(clave, { nombre, veces: 0, posicion });
+    veces.get(clave).veces++;
+  });
+
+  return [...veces.values()]
+    .sort((a, b) => b.veces - a.veces || a.posicion - b.posicion)
+    .slice(0, NUM_CONOCIDO_POR)
+    .map((e) => e.nombre);
+}
 
 /**
  * Busca profesionales del doblaje por su nombre o por el nombre de un
@@ -141,13 +224,17 @@ async function buscar(texto) {
 
   // 3. Personajes de todos esos profesionales, en una sola consulta.
   //    "IN (?)" con una lista: mysql2 la convierte en IN (1, 2, 3...).
-  const [personajes] = await db.query(
-    `SELECT d.actor_doblaje_id, pe.nombre AS personaje, pe.orden, p.popularidad
+    const [personajes] = await db.query(
+    `SELECT d.actor_doblaje_id, pe.nombre AS personaje, pe.orden, p.popularidad,
+            ao.nombre AS actor_original,
+            EXISTS (SELECT 1 FROM peliculas_generos pg
+                    WHERE pg.pelicula_id = p.id AND pg.genero_id = ?) AS es_animacion
        FROM doblajes d
-       JOIN personajes pe ON pe.id = d.personaje_id
-       JOIN peliculas p   ON p.id = pe.pelicula_id
+       JOIN personajes pe              ON pe.id = d.personaje_id
+       JOIN peliculas p                ON p.id = pe.pelicula_id
+       LEFT JOIN actores_originales ao ON ao.id = pe.actor_original_id
       WHERE d.actor_doblaje_id IN (?)`,
-    [actores.map((a) => a.id)]
+    [GENERO_ANIMACION, actores.map((a) => a.id)]
   );
 
   // 4. Agrupamos los personajes por profesional (Map: id → lista)
@@ -157,13 +244,11 @@ async function buscar(texto) {
     porActor.get(p.actor_doblaje_id).push(p);
   }
 
-  // 5. A cada profesional le añadimos sus personajes más conocidos,
-  //    con el mismo criterio que en su ficha (ordenarPorRelevancia)
+    // 5. A cada profesional le añadimos los actores (o personajes, en
+  //    animación) que más ha doblado, sin repetir
   return actores.map((actor) => ({
     ...actor,
-    conocido_por: ordenarPorRelevancia(porActor.get(actor.id) ?? [])
-      .slice(0, NUM_CONOCIDO_POR)
-      .map((t) => t.personaje),
+    conocido_por: masDoblados(ordenarPorRelevancia(porActor.get(actor.id) ?? [])),
   }));
 }
 

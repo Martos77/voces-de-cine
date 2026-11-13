@@ -123,13 +123,15 @@ function htmlDestacados(destacados) {
     const detalle = !t.es_animacion && t.actor_original
       ? escapar(t.actor_original)
       : `${escapar(t.titulo)}${t.anio ? ` (${t.anio})` : ''}`;
-    return `
+      // Si ha doblado al mismo personaje en varias películas, se indica
+    const veces = t.num_peliculas > 1 ? ` · ${t.num_peliculas} películas` : '';
+      return `
       <li>
         <a class="personaje-tarjeta" href="pelicula.html?id=${t.pelicula_id}">
                     ${htmlImagenPersonaje(t)}
           <span class="personaje-tarjeta__texto">
             <span class="personaje-tarjeta__nombre">${escapar(t.personaje)}</span>
-            <span class="personaje-tarjeta__detalle">${detalle}</span>
+            <span class="personaje-tarjeta__detalle">${detalle}${veces}</span>
           </span>
         </a>
       </li>`;
