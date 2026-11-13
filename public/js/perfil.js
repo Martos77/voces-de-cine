@@ -265,7 +265,9 @@ async function iniciar() {
       htmlAjustes(usuario);
 
     activarFormularioDatos();
-    activarFormularioEliminar();
+    activarFormularioEliminar();    
+    // Las recomendaciones se cargan aparte (no hace falta esperarlas)
+    cargarRecomendaciones();
   } catch (error) {
     mostrarError(perfil, error.message);
   }
