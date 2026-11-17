@@ -1,0 +1,15 @@
+tmdb_id, personaje, actor_original, version, archivo
+#TOY STORY
+862, Woody, Tom Hanks, original, toy-story_woody_original.mp3
+862, Woody, Tom Hanks, castellano, toy-story_woody_castellano.mp3
+862, Buzz Lightyear, Tim Allen, original, toy-story_buzz_original.mp3
+862, Buzz Lightyear, Tim Allen, castellano, toy-story_buzz_castellano.mp3
+862, Sr. Patata, Don Rickles, original, toy-story_sr-patata_original.mp3
+862, Sr. Patata, Don Rickles, castellano, toy-story_sr-patata_castellano.mp3
+#VENGADORES
+24428, Thor, Chris Hemsworth, original, vengadores_thor_original.mp3
+24428, Thor, Chris Hemsworth, castellano, vengadores_thor_castellano.mp3
+24428, Tony Stark, Robert Downey Jr., original, vengadores_tony-stark_original.mp3
+24428, Tony Stark, Robert Downey Jr., castellano, vengadores_tony-stark_castellano.mp3
+24428, Nick Furia, Samuel L. Jackson, original, vengadores_nick-furia_original.mp3
+24428, Nick Furia, Samuel L. Jackson, castellano, vengadores_nick-furia_castellano.mp3

@@ -14,7 +14,7 @@
 
 import {
   pedirApi, enviarApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError,
-  htmlCarrusel, activarCarruseles, iniciales,
+  htmlCarrusel, activarCarruseles, iniciales, botonOnda, activarAudios,
 } from './comun.js';
 import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
@@ -122,9 +122,9 @@ function htmlDestacados(destacados) {
     const detalle = !t.es_animacion && t.actor_original
       ? escapar(t.actor_original)
       : `${escapar(t.titulo)}${t.anio ? ` (${t.anio})` : ''}`;
-      // Si ha doblado al mismo personaje en varias películas, se indica
+    // Si ha doblado al mismo personaje en varias películas, se indica
     const veces = t.num_peliculas > 1 ? ` · ${t.num_peliculas} películas` : '';
-      return `
+    return `
       <li>
         <a class="personaje-tarjeta" href="pelicula.html?id=${t.pelicula_id}">
                     ${htmlImagenPersonaje(t)}
@@ -171,6 +171,49 @@ function htmlHabituales(habituales) {
     <section class="bloque">
       <h2>Voz habitual de</h2>
       <ul class="filas-personas">${filas}</ul>
+    </section>`;
+}
+
+/**
+ * "Escucha su voz": los fragmentos en castellano de sus personajes,
+ * para oír cómo cambia de un papel a otro. Junto a cada uno, si lo
+ * hay, el fragmento original para compararlo.
+ * Solo se muestra si tiene algún fragmento.
+ * @param {Array} trabajos - todos sus trabajos (con audio_castellano y audio_original)
+ * @param {string} nombre - nombre de la voz
+ */
+function htmlEscuchar(trabajos, nombre) {
+  const conAudio = trabajos.filter((t) => t.audio_castellano);
+  if (conAudio.length === 0) return '';
+
+  const tarjetas = conAudio.map((t) => {
+    // Debajo del personaje: la película y, fuera de la animación, el actor original
+    const detalle = [
+      `${t.titulo}${t.anio ? ` (${t.anio})` : ''}`,
+      !t.es_animacion && t.actor_original ? `voz de ${t.actor_original}` : null,
+    ].filter(Boolean).map(escapar).join(' · ');
+
+    return `
+      <li class="escucha">
+        ${botonOnda(t.audio_castellano, 'castellano', `a ${t.personaje} en castellano (${nombre})`)}
+        <span class="escucha__textos">
+          <a class="escucha__personaje" href="pelicula.html?id=${t.pelicula_id}">${escapar(t.personaje)}</a>
+          <span class="escucha__detalle">${detalle}</span>
+        </span>
+        ${t.audio_original
+        ? `<span class="escucha__original">
+               ${botonOnda(t.audio_original, 'original', `a ${t.personaje} en versión original${t.actor_original ? ` (${t.actor_original})` : ''}`)}
+               <span aria-hidden="true">Original</span>
+             </span>`
+        : ''}
+      </li>`;
+  }).join('');
+
+  return `
+    <section class="bloque">
+      <h2>Escucha su voz</h2>
+      <p class="ficha__secundario">Fragmentos de sus personajes en castellano. Pulsa la onda gris para escuchar la versión original.</p>
+      <ul class="escuchas">${tarjetas}</ul>
     </section>`;
 }
 
@@ -245,12 +288,15 @@ async function iniciar() {
     ficha.innerHTML =
       htmlCabecera(actor) +
       htmlDestacados(actor.destacados) +
+      htmlEscuchar(actor.trabajos, actor.nombre) +
       htmlHabituales(actor.habituales) +
       htmlFilmografia(actor.trabajos, actor.destacados.length);
 
     // Las flechas del carrusel necesitan que ya exista su HTML
     activarCarruseles(ficha);
-    
+
+    activarAudios(ficha);
+
     // Botón de voz favorita (depende de si hay sesión)
     cargarVozFavorita(actor.id);
   } catch (error) {

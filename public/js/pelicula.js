@@ -13,7 +13,7 @@
 
 import {
   pedirApi, enviarApi, escapar, poster, tarjetaPelicula, parametroUrl, mostrarError, iniciales,
-  htmlCarrusel, activarCarruseles,
+  htmlCarrusel, activarCarruseles, botonOnda, activarAudios,
 } from './comun.js';
 import { obtenerUsuario, enlaceEntrar } from './sesion.js';
 
@@ -21,13 +21,6 @@ const ficha = document.getElementById('ficha');
 
 // Dirección del servidor de imágenes de TMDB
 const IMAGENES_TMDB = 'https://image.tmdb.org/t/p/';
-
-// Icono de onda de voz (el mismo del logotipo), para el reparto de doblaje
-const ICONO_ONDA = `
-  <svg class="reparto-fila__onda" viewBox="0 0 28 28" fill="none" stroke="currentColor"
-       stroke-width="2" stroke-linecap="round" aria-hidden="true">
-    <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
-  </svg>`;
 
 /**
  * HTML de la cabecera: fotograma de fondo, póster, título, datos,
@@ -61,7 +54,7 @@ function htmlCabecera(p, hayVoces) {
 
   return `
     <header class="ficha-portada" ${fondo}>
-            <div class="ficha-portada__contenido">
+      <div class="ficha-portada__contenido">
         ${poster(p.poster_path, p.titulo, 'w500')}
         <div>
           <h1>${escapar(p.titulo)}</h1>
@@ -70,7 +63,6 @@ function htmlCabecera(p, hayVoces) {
           <div class="ficha-portada__acciones">
             ${botonReparto}
             ${botonConexiones}
-          </div>
           </div>
           <!-- Aquí se pondrán los botones del usuario (favorita, vista...) -->
           <div class="acciones-usuario" id="acciones-usuario"></div>
@@ -175,17 +167,29 @@ function htmlRepartoDoblaje(conVoz, sinVoz) {
     return '<p class="aviso">Todavía no hay datos de doblaje para esta película.</p>';
   }
 
+  // Cada lado es una "celda": el enlace a la persona y, si hay
+  // fragmento de audio, su botón de onda (fuera del enlace: un botón
+  // no puede ir dentro de un enlace)
   const filas = conVoz.map((r) => `
     <li class="reparto-fila">
-      ${htmlLadoOriginal(r)}
+      <div class="reparto-fila__celda">
+        ${htmlLadoOriginal(r)}
+        ${r.audio_original
+          ? botonOnda(r.audio_original, 'original', `a ${r.personaje} en versión original (${r.actor_original || 'actor desconocido'})`)
+          : ''}
+      </div>
       <span class="reparto-fila__flecha" aria-hidden="true">→</span>
-      <a class="reparto-fila__lado reparto-fila__lado--voz" href="actor-doblaje.html?id=${r.actor_doblaje_id}">
-        ${htmlFoto(null, r.actor_doblaje, 'reparto-fila__foto--voz')}
-        <span class="reparto-fila__principal">
-          <span class="visualmente-oculto">Voz en castellano: </span>${escapar(r.actor_doblaje)}
-        </span>
-        ${ICONO_ONDA}
-      </a>
+      <div class="reparto-fila__celda">
+        <a class="reparto-fila__lado reparto-fila__lado--voz" href="actor-doblaje.html?id=${r.actor_doblaje_id}">
+          ${htmlFoto(null, r.actor_doblaje, 'reparto-fila__foto--voz')}
+          <span class="reparto-fila__principal">
+            <span class="visualmente-oculto">Voz en castellano: </span>${escapar(r.actor_doblaje)}
+          </span>
+        </a>
+        ${r.audio_castellano
+          ? botonOnda(r.audio_castellano, 'castellano', `a ${r.personaje} en castellano (${r.actor_doblaje})`)
+          : ''}
+      </div>
     </li>`).join('');
 
   // Las flechas solo hacen falta si hay más de una página
@@ -522,6 +526,7 @@ async function iniciar() {
     activarPestanas();
     activarCarruseles(ficha);    // flechas del reparto original
     activarPaginasReparto();     // flechas del reparto de doblaje
+    activarAudios(ficha);        // botones para escuchar los fragmentos
 
     // Botones del usuario (no hace falta esperar a que terminen)
     cargarAccionesUsuario(pelicula.id);

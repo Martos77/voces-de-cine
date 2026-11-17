@@ -332,6 +332,59 @@ img { max-width: 100%; display: block; }
   border-color: var(--borde-campo);
 }
 
+/* Botón de onda para escuchar un fragmento */
+.boton-onda {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: none;
+  color: var(--texto-suave);          /* versión original: gris */
+  cursor: pointer;
+}
+
+.boton-onda--castellano {
+  color: var(--violeta);              /* versión doblada: violeta */
+}
+
+.boton-onda:hover {
+  border-color: var(--borde-campo);
+  background: var(--superficie-alta);
+}
+
+.boton-onda__icono {
+  width: 28px;
+  height: 28px;
+}
+
+/* Mientras suena: círculo de fondo y las barras se mueven */
+.boton-onda[aria-pressed='true'] {
+  border-color: currentColor;
+  background: var(--violeta-fondo);
+}
+
+.boton-onda[aria-pressed='true'] path {
+  transform-box: fill-box;            /* cada barra crece desde su propio centro */
+  transform-origin: center;
+  animation: onda 0.9s ease-in-out infinite;
+}
+
+/* Cada barra empieza en un momento distinto, como una onda de verdad */
+.boton-onda[aria-pressed='true'] path:nth-child(2) { animation-delay: -0.15s; }
+.boton-onda[aria-pressed='true'] path:nth-child(3) { animation-delay: -0.3s; }
+.boton-onda[aria-pressed='true'] path:nth-child(4) { animation-delay: -0.45s; }
+.boton-onda[aria-pressed='true'] path:nth-child(5) { animation-delay: -0.6s; }
+.boton-onda[aria-pressed='true'] path:nth-child(6) { animation-delay: -0.75s; }
+
+@keyframes onda {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.35); }
+}
+
 /* Etiquetas de género */
 .etiquetas {
   display: flex;
@@ -1303,14 +1356,18 @@ a.reparto-fila__lado:hover .reparto-fila__principal {
   font-size: 1.25rem;
 }
 
-/* Icono de onda, a la derecha del todo */
-.reparto-fila__onda {
-  width: 28px;
-  height: 28px;
-  margin-left: auto;
-  flex-shrink: 0;
-  color: var(--violeta);
+/* Cada lado de la fila: la persona y, a su derecha, el botón de audio */
+.reparto-fila__celda {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
 }
+
+.reparto-fila__celda .reparto-fila__lado {
+  flex: 1;
+}
+
 
 /* Reparto de doblaje en dos columnas (de 8 en 8) */
 .reparto--doble {
@@ -1822,6 +1879,59 @@ a.tarjeta-reparto:hover .tarjeta-reparto__foto {
   height: 100%;
   border-radius: 999px;
   background: var(--violeta);
+}
+
+/* "Escucha su voz": tarjetas con los fragmentos de audio */
+.escuchas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+}
+
+.escucha {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem 0.75rem 0.75rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.escucha__textos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.escucha__personaje {
+  color: var(--texto);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.escucha__personaje:hover {
+  color: var(--violeta-claro);
+}
+
+.escucha__detalle {
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+}
+
+/* La onda gris del original, con su palabra debajo */
+.escucha__original {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--texto-suave);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* En pantallas medianas, el panel pasa debajo; en el móvil, todo en

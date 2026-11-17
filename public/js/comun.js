@@ -199,3 +199,75 @@ export function tarjetaVoz(voz) {
 export function tarjetaRecomendada(pelicula) {
   return tarjetaPelicula(pelicula, `<span class="motivo">${escapar(pelicula.motivo)}</span>`);
 }
+
+
+// --- Audios ------------------------------------------------------------------
+
+// Icono de onda de voz (el mismo del logotipo). Es el botón para
+// escuchar un fragmento. Cada barra es un <path> separado para poder
+// animarlas mientras suena.
+const ICONO_ONDA = `
+  <svg class="boton-onda__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
+       stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M3 12v4"/><path d="M7 9v10"/><path d="M11 5v18"/>
+    <path d="M15 9v10"/><path d="M19 6v16"/><path d="M23 11v6"/>
+  </svg>`;
+
+/**
+ * Botón de onda para escuchar un fragmento de audio.
+ * data-audio guarda la dirección del archivo; aria-pressed indica si
+ * está sonando (y el CSS anima la onda).
+ * @param {string} archivo - nombre del .mp3 en public/audio/
+ * @param {string} version - 'original' (gris) o 'castellano' (violeta)
+ * @param {string} descripcion - qué se escucha, para el lector de pantalla
+ *        (por ejemplo: "a Woody en castellano (Óscar Barberán)")
+ */
+export function botonOnda(archivo, version, descripcion) {
+  return `
+    <button type="button" class="boton-onda boton-onda--${version}" data-audio="/audio/${escapar(archivo)}"
+            aria-pressed="false" aria-label="Escuchar ${escapar(descripcion)}"
+            title="Escuchar ${version === 'original' ? 'la versión original' : 'en castellano'}">
+      ${ICONO_ONDA}
+    </button>`;
+}
+
+/**
+ * Hace que suenen los botones de onda que haya dentro de un contenedor.
+ * Hay un solo reproductor: así nunca suenan dos fragmentos a la vez.
+ *   - Pulsar un botón: suena su fragmento (y se para el que sonara).
+ *   - Pulsar el que está sonando: se para.
+ * @param {HTMLElement} contenedor
+ */
+export function activarAudios(contenedor) {
+  const reproductor = new Audio();
+  let botonActivo = null;
+
+  function marcar(boton) {
+    if (botonActivo) botonActivo.setAttribute('aria-pressed', 'false');
+    botonActivo = boton;
+    if (boton) boton.setAttribute('aria-pressed', 'true');
+  }
+
+  contenedor.addEventListener('click', async (evento) => {
+    const boton = evento.target.closest('[data-audio]');
+    if (!boton) return;
+
+    // Si ya estaba sonando, se para
+    if (boton === botonActivo) {
+      reproductor.pause();
+      marcar(null);
+      return;
+    }
+
+    reproductor.src = boton.dataset.audio;
+    marcar(boton);
+    try {
+      await reproductor.play();
+    } catch {
+      marcar(null);   // si el archivo no se puede reproducir
+    }
+  });
+
+  // Al terminar el fragmento, el botón vuelve a su estado normal
+  reproductor.addEventListener('ended', () => marcar(null));
+}

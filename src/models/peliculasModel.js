@@ -88,7 +88,7 @@ async function buscar(filtros) {
   // Si hay condiciones, montamos el WHERE; si no, queda vacío
   const where = condiciones.length ? 'WHERE ' + condiciones.join(' AND ') : '';
 
-    // Si el orden no es válido (o no se indica), por popularidad
+  // Si el orden no es válido (o no se indica), por popularidad
   const orden = ORDENES[filtros.orden] || ORDENES.popularidad;
 
   // Página pedida (mínimo la 1) y cuántas películas hay que saltarse
@@ -126,35 +126,6 @@ async function buscar(filtros) {
 }
 
 /**
- * Número entero positivo. "1995" → 1995; "abc" o "-3" → null.
- */
-function entero(valor) {
-  const numero = Number(valor);
-  return Number.isInteger(numero) && numero > 0 ? numero : null;
-}
-
-/**
- * Número con decimales. "7.5" → 7.5; vacío o "abc" → null.
- */
-function decimal(valor) {
-  if (valor === undefined || valor === '') return null;
-  const numero = Number(valor);
-  return Number.isFinite(numero) ? numero : null;
-}
-
-/**
- * Texto sin espacios sobrantes y de 100 caracteres como máximo.
- * Si queda vacío, null.
- */
-function texto(valor) {
-  if (typeof valor !== 'string') return null;
-  const limpio = valor.trim().slice(0, 100);
-  return limpio || null;
-}
-
-module.exports = { entero, decimal, texto };
-
-/**
  * Devuelve la ficha completa de una película: sus datos, sus géneros
  * y su reparto con las voces en castellano.
  * @param {number} id - id de la película en nuestra base de datos
@@ -188,8 +159,15 @@ async function obtenerPorId(id) {
             ao.nombre     AS actor_original,
             ao.foto_path  AS actor_original_foto,
             ad.id         AS actor_doblaje_id,
-            ad.nombre     AS actor_doblaje
-       FROM personajes pe
+            ad.nombre     AS actor_doblaje,
+            ad.id         AS actor_doblaje_id,
+            ad.nombre     AS actor_doblaje,
+            -- Fragmentos de audio del personaje (null si no hay)
+            (SELECT archivo FROM audios
+              WHERE personaje_id = pe.id AND version = 'original')   AS audio_original,
+            (SELECT archivo FROM audios
+              WHERE personaje_id = pe.id AND version = 'castellano') AS audio_castellano
+       FROM personajes pe      
        LEFT JOIN actores_originales ao ON ao.id = pe.actor_original_id
        LEFT JOIN doblajes d            ON d.personaje_id = pe.id AND d.version = 'castellano'
        LEFT JOIN actores_doblaje ad    ON ad.id = d.actor_doblaje_id

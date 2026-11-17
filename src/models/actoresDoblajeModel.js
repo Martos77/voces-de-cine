@@ -94,7 +94,7 @@ async function obtenerPorId(id) {
   // 2. Todos sus trabajos. Además de la película y el personaje, traemos
   //    la posición en el reparto y la popularidad (para elegir los
   //    destacados) y si la película es de animación.
-  const [trabajos] = await db.query(
+    const [trabajos] = await db.query(
     `SELECT p.id          AS pelicula_id,
             p.titulo,
             p.anio,
@@ -106,7 +106,12 @@ async function obtenerPorId(id) {
             ao.id         AS actor_original_id,
             ao.nombre     AS actor_original,
             EXISTS (SELECT 1 FROM peliculas_generos pg
-                    WHERE pg.pelicula_id = p.id AND pg.genero_id = ?) AS es_animacion
+                    WHERE pg.pelicula_id = p.id AND pg.genero_id = ?) AS es_animacion,
+            -- Fragmentos de audio del personaje (null si no hay)
+            (SELECT archivo FROM audios
+              WHERE personaje_id = pe.id AND version = 'castellano') AS audio_castellano,
+            (SELECT archivo FROM audios
+              WHERE personaje_id = pe.id AND version = 'original')   AS audio_original
        FROM doblajes d
        JOIN personajes pe              ON pe.id = d.personaje_id
        JOIN peliculas p                ON p.id = pe.pelicula_id
