@@ -15,7 +15,9 @@
     9. Buscador de voces
    10. Ficha de película
    11. Fichas de personas (actor de doblaje y actor original)
-   12. Preferencias de accesibilidad
+   12. Usuarios: sesión, acceso, acciones y perfil
+   13. Conexiones (el grafo)
+   14. Preferencias de accesibilidad
 
    Cada sección incluye al final sus propios ajustes para el móvil
    (@media (max-width: 720px)).
@@ -40,6 +42,11 @@
   --violeta: #a56bee;          /* violeta principal (contraste 5,6:1) */
   --violeta-claro: #bd8aff;    /* enlaces y estados "hover" (7,8:1) */
   --violeta-fondo: rgba(165, 107, 238, 0.14); /* fondo suave para etiquetas */
+
+    /* Colores del grafo de conexiones (las voces usan el violeta) */
+  --pelicula: #f2b84b;         /* ámbar: películas */
+  --actor: #4fc3dc;            /* turquesa: actores originales */
+  --personaje: #f472b6;        /* rosa: personajes de animación */
 
   /* Bordes */
   --borde: #302b40;            /* separadores y bordes decorativos */
@@ -165,8 +172,7 @@ img { max-width: 100%; display: block; }
   gap: 2rem;
 }
 
-.cabecera nav a,
-.cabecera__pronto {
+.cabecera nav a {
   color: var(--texto-suave);
   font-size: 0.9375rem;
   font-weight: 500;
@@ -179,12 +185,6 @@ img { max-width: 100%; display: block; }
 .cabecera nav a[aria-current='page'] {
   color: var(--texto);
   border-bottom-color: var(--violeta);
-}
-
-/* Secciones que todavía no existen (Conexiones) */
-.cabecera__pronto {
-  opacity: 0.5;
-  cursor: default;
 }
 
 .pie {
@@ -322,14 +322,12 @@ img { max-width: 100%; display: block; }
 
 /* Botón desactivado ("Anterior" en la página 1) o de una función que
    todavía no existe ("Explorar conexiones") */
-.boton:disabled,
-.boton--pronto {
+.boton:disabled {
   opacity: 0.4;
   cursor: default;
 }
 
-.boton:disabled:hover,
-.boton--pronto:hover {
+.boton:disabled:hover {
   background: transparent;
   border-color: var(--borde-campo);
 }
@@ -2261,7 +2259,325 @@ a.tarjeta-reparto:hover .tarjeta-reparto__foto {
 }
 
 /* ---------------------------------------------------------------------
-   13. PREFERENCIAS DE ACCESIBILIDAD
+   13. CONEXIONES: el grafo (conexiones.html)
+   --------------------------------------------------------------------- */
+
+/* Título a la izquierda y buscador a la derecha */
+.conexiones-cabecera {
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.conexiones-cabecera h1 {
+  margin-bottom: 0.25rem;
+}
+
+.conexiones-cabecera .ficha__secundario {
+  max-width: 40rem;
+  margin: 0;
+}
+
+.conexiones-buscar {
+  flex: 0 1 360px;
+}
+
+.conexiones-buscar input,
+.conexiones-buscar .boton {
+  min-height: 44px;
+}
+
+/* Resultados del buscador: botones en una fila */
+.conexiones-resultados {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.conexiones-resultados__boton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--borde-campo);
+  border-radius: 999px;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* Debajo del nombre, qué es (voz, película...) */
+.conexiones-resultados__detalle {
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+}
+
+.conexiones-resultados__boton:hover {
+  border-color: var(--violeta);
+  color: var(--violeta-claro);
+}
+
+/* Leyenda de colores */
+.leyenda {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+}
+
+.leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.leyenda__punto {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.leyenda__punto--voz { background: var(--violeta); }
+.leyenda__punto--pelicula { background: var(--pelicula); }
+.leyenda__punto--actor { background: var(--actor); }
+.leyenda__punto--personaje { background: var(--personaje); }
+
+/* Grafo a la izquierda y panel a la derecha */
+.conexiones {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+}
+
+.grafo {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  /* Fondo con una cuadrícula de puntos muy suave */
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 24px 24px,
+    var(--superficie);
+}
+
+.grafo > .resumen,
+.grafo > .aviso {
+  padding: 1.5rem;
+}
+
+.grafo svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;      /* para arrastrar y ampliar con los dedos */
+}
+
+/* Anillos de fondo: marcan la distancia al centro */
+.anillo {
+  fill: none;
+  stroke: var(--borde);
+  stroke-dasharray: 4 6;
+}
+
+/* Enlaces (líneas) */
+.enlace {
+  stroke: var(--borde-campo);
+  stroke-opacity: 0.45;
+  stroke-width: 1.5;
+  transition: stroke-opacity 0.2s;
+}
+
+.enlace--activo {
+  stroke: var(--texto-suave);
+  stroke-opacity: 0.9;
+  stroke-width: 2;
+}
+
+.enlace--atenuado {
+  stroke-opacity: 0.12;
+}
+
+/* Nodos (círculos con su nombre) */
+.nodo {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.nodo circle {
+  stroke: var(--fondo);
+  stroke-width: 2;
+}
+
+.nodo--voz circle { fill: var(--violeta); }
+.nodo--pelicula circle { fill: var(--pelicula); }
+.nodo--actor circle { fill: var(--actor); }
+.nodo--personaje circle { fill: var(--personaje); }
+
+/* El centro y el seleccionado llevan un anillo blanco */
+.nodo--centro circle,
+.nodo--seleccionado circle {
+  stroke: var(--texto);
+  stroke-width: 3;
+}
+
+.nodo--atenuado {
+  opacity: 0.25;
+}
+
+.nodo:focus {
+  outline: none;
+}
+
+.nodo:focus-visible circle {
+  stroke: var(--violeta-claro);
+  stroke-width: 4;
+}
+
+.nodo__nombre {
+  fill: var(--texto);
+  font-size: 12px;
+  font-weight: 500;
+  text-anchor: middle;
+  pointer-events: none;
+  /* Borde del color del fondo para que el texto se lea sobre las líneas */
+  paint-order: stroke;
+  stroke: var(--superficie);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.nodo--centro .nodo__nombre {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.nodo__nombre--oculto {
+  display: none;
+}
+
+/* Panel con los datos del nodo seleccionado */
+.panel-nodo {
+  height: 600px;
+  overflow-y: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-grande);
+  background: var(--superficie);
+}
+
+.panel-nodo__tipo {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.panel-nodo__tipo--voz { color: var(--violeta-claro); }
+.panel-nodo__tipo--pelicula { color: var(--pelicula); }
+.panel-nodo__tipo--actor { color: var(--actor); }
+.panel-nodo__tipo--personaje { color: var(--personaje); }
+
+.panel-nodo__nombre {
+  margin: 0 0 1rem;
+  font-size: 1.375rem;
+  line-height: 1.25;
+}
+
+.panel-nodo__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel-nodo__titulo {
+  margin: 0 0 0.5rem;
+  color: var(--texto-suave);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.panel-nodo__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cada conexión es un botón que la selecciona en el grafo */
+.panel-nodo__vecino {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.5rem;
+  border: 0;
+  border-radius: var(--radio);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.panel-nodo__vecino:hover,
+.panel-nodo__vecino:focus-visible {
+  background: var(--superficie-alta);
+}
+
+.panel-nodo__vecino-nombre {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.panel-nodo__vecino-dato {
+  display: block;
+  color: var(--texto-suave);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+/* En pantallas medianas, el panel pasa debajo del grafo */
+@media (max-width: 960px) {
+  .conexiones {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-nodo {
+    height: auto;
+    max-height: 480px;
+  }
+}
+
+@media (max-width: 720px) {
+  .conexiones-cabecera {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .conexiones-buscar {
+    flex-basis: auto;
+  }
+
+  .grafo {
+    height: 440px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   14. PREFERENCIAS DE ACCESIBILIDAD
    --------------------------------------------------------------------- */
 
 /* Si el usuario ha pedido menos animaciones, se quitan las transiciones */

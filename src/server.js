@@ -42,6 +42,7 @@ app.use('/api/generos', rutasGeneros);
 app.use('/api/tmdb', rutasTmdb);
 app.use('/api/auth', rutasAuth);
 app.use('/api/usuario', rutasUsuario);
+app.use('/api/conexiones', require('./routes/conexiones'));
 
 // Cualquier otra dirección de la API que no exista → error 404
 app.use('/api', (req, res) => {

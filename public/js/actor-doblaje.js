@@ -90,10 +90,9 @@ function htmlCabecera(actor) {
                 <div class="perfil__acciones">
           <!-- Aquí se pondrá el botón de voz favorita -->
           <span id="voz-favorita"></span>
-          <!-- Las conexiones (el grafo) se añadirán más adelante -->
-          <span class="boton boton--secundario boton--pronto" aria-disabled="true" title="Próximamente">
+                    <a class="boton boton--secundario" href="conexiones.html?tipo=voz&id=${actor.id}">
             ${icono('conexiones', 'boton__icono')} Ver en conexiones
-          </span>
+          </a>
         </div>
       </div>
       <!-- <dl>: lista de datos con su descripción (dt) y su valor (dd) -->

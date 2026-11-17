@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Conexiones · Voces de Cine</title>
+    <!-- Tipografía Inter (Google Fonts), la definida en la guía de estilo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+    <!-- Barra de navegación común a todas las páginas -->
+    <header class="cabecera">
+        <a class="marca" href="index.html">
+            <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
+            <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6" />
+            </svg>
+            <span>Voces <span class="marca__acento">de Cine</span></span>
+        </a>
+        <nav aria-label="Principal">
+            <a href="catalogo.html">Películas</a>
+            <a href="voces.html">Voces</a>
+            <a href="conexiones.html" aria-current="page">Conexiones</a>
+        </nav>
+        <!-- Aquí sesion.js pondrá "Entrar" o el nombre del usuario -->
+        <div class="cabecera__sesion" id="sesion"></div>
+    </header>
+
+    <main class="contenedor">
+        <div class="seccion-cabecera conexiones-cabecera">
+            <div>
+                <h1>Conexiones</h1>
+                <p class="ficha__secundario">
+                    Cómo se relacionan las voces, las películas y los actores. Pulsa un círculo
+                    para ver sus datos y pulsa dos veces (o «Explorar desde aquí») para moverte por la red.
+                </p>
+            </div>
+            <!-- Buscador de voces para elegir desde dónde empezar -->
+            <form class="buscador conexiones-buscar" id="buscar" role="search">
+                <label class="visualmente-oculto" for="texto">Buscar una voz, un actor, una película o un personaje</label>
+                <input id="texto" type="search" placeholder="Voz, actor, película o personaje…" autocomplete="off">
+                <button class="boton" type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <!-- Resultados del buscador (conexiones.js los rellena) -->
+        <ul class="conexiones-resultados" id="resultados" hidden></ul>
+
+        <!-- Leyenda: qué significa cada color -->
+        <ul class="leyenda" aria-label="Leyenda">
+            <li><span class="leyenda__punto leyenda__punto--voz"></span>Voz en castellano</li>
+            <li><span class="leyenda__punto leyenda__punto--pelicula"></span>Película</li>
+            <li><span class="leyenda__punto leyenda__punto--actor"></span>Actor o actriz original</li>
+            <li><span class="leyenda__punto leyenda__punto--personaje"></span>Personaje de animación</li>
+        </ul>
+
+        <div class="conexiones">
+            <!-- Aquí conexiones.js dibuja el grafo con D3.js -->
+            <div class="grafo" id="grafo">
+                <p class="resumen">Cargando…</p>
+            </div>
+            <!-- Datos del círculo seleccionado (se anuncian al cambiar) -->
+            <aside class="panel-nodo" id="panel" aria-live="polite"></aside>
+        </div>
+    </main>
+
+    <footer class="pie">
+        <p>Este producto utiliza la API de TMDB, pero no está avalado ni certificado por TMDB.</p>
+    </footer>
+
+    <!-- D3.js: librería para dibujar el grafo (se carga antes que conexiones.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <script type="module" src="js/conexiones.js"></script>
+    <!-- Sesión del usuario en la cabecera (en todas las páginas) -->
+    <script type="module" src="js/sesion.js"></script>
+</body>
+
+</html>

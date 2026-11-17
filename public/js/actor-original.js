@@ -107,6 +107,11 @@ function htmlCabecera(actor) {
         <h1>${escapar(actor.nombre)}</h1>
         <p class="ficha__secundario">Actor o actriz original</p>
         ${htmlVozPrincipal(actor.voces[0], datos)}
+                ${actor.voces.length > 0
+          ? `<div class="perfil__acciones">
+               <a class="boton boton--secundario" href="conexiones.html?tipo=actor&id=${actor.id}">Ver en conexiones</a>
+             </div>`
+          : ''}
       </div>
       <dl class="panel-datos">${filas}</dl>
     </header>`;

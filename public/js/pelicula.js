@@ -54,6 +54,11 @@ function htmlCabecera(p, hayVoces) {
     ? '<a class="boton" href="#pestanas" data-abrir="doblaje">Ver reparto de doblaje <span aria-hidden="true">▷</span></a>'
     : '';
 
+  // Y el de las conexiones, también (sin voces, el grafo estaría vacío)
+  const botonConexiones = hayVoces
+    ? `<a class="boton boton--secundario" href="conexiones.html?tipo=pelicula&id=${p.id}">Explorar conexiones</a>`
+    : '';
+
   return `
     <header class="ficha-portada" ${fondo}>
             <div class="ficha-portada__contenido">
@@ -64,10 +69,8 @@ function htmlCabecera(p, hayVoces) {
           ${p.sinopsis ? `<p class="ficha__sinopsis">${escapar(p.sinopsis)}</p>` : ''}
           <div class="ficha-portada__acciones">
             ${botonReparto}
-            <!-- Las conexiones (el grafo) se añadirán más adelante -->
-            <span class="boton boton--secundario boton--pronto" aria-disabled="true" title="Próximamente">
-              Explorar conexiones
-            </span>
+            ${botonConexiones}
+          </div>
           </div>
           <!-- Aquí se pondrán los botones del usuario (favorita, vista...) -->
           <div class="acciones-usuario" id="acciones-usuario"></div>
@@ -220,10 +223,10 @@ function activarPaginasReparto() {
   const totalPaginas = Math.ceil(filas.length / POR_PAGINA_REPARTO);
   let pagina = 0;
 
-    /**
-   * @param {number} direccion - 1 si se avanza, -1 si se retrocede,
-   *                             0 al cargar la página (sin animación)
-   */
+  /**
+ * @param {number} direccion - 1 si se avanza, -1 si se retrocede,
+ *                             0 al cargar la página (sin animación)
+ */
   function mostrarPagina(direccion = 0) {
     // Math.floor(i / 8) es la página en la que está cada fila: 0, 0... 1, 1...
     filas.forEach((fila, i) => {
@@ -520,7 +523,7 @@ async function iniciar() {
     activarCarruseles(ficha);    // flechas del reparto original
     activarPaginasReparto();     // flechas del reparto de doblaje
 
-        // Botones del usuario (no hace falta esperar a que terminen)
+    // Botones del usuario (no hace falta esperar a que terminen)
     cargarAccionesUsuario(pelicula.id);
 
     // Después de mostrar la ficha, cargamos las películas relacionadas

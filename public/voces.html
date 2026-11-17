@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <!-- Para que la página se adapte bien al móvil -->
@@ -12,24 +13,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
+
 <body>
   <!-- Barra de navegación común a todas las páginas -->
   <header class="cabecera">
     <a class="marca" href="index.html">
       <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
-      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" aria-hidden="true">
-        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6" />
       </svg>
       <span>Voces <span class="marca__acento">de Cine</span></span>
     </a>
     <nav aria-label="Principal">
       <a href="catalogo.html">Películas</a>
       <a href="voces.html" aria-current="page">Voces</a>
-      <!-- Sección que se añadirá más adelante -->
-      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+      <a href="conexiones.html">Conexiones</a>
     </nav>
-        <!-- Aquí sesion.js pondrá "Entrar" o el nombre del usuario -->
+    <!-- Aquí sesion.js pondrá "Entrar" o el nombre del usuario -->
     <div class="cabecera__sesion" id="sesion"></div>
   </header>
 
@@ -47,8 +48,7 @@
     <form id="buscador" class="buscador" role="search">
       <!-- La etiqueta no se ve, pero la leen los lectores de pantalla -->
       <label for="texto" class="visualmente-oculto">Nombre del profesional o del personaje</label>
-      <input id="texto" name="texto" type="search"
-             placeholder="Por ejemplo, Óscar Barberán o Woody" autocomplete="off">
+      <input id="texto" name="texto" type="search" placeholder="Por ejemplo, Óscar Barberán o Woody" autocomplete="off">
       <button type="submit" class="boton">Buscar</button>
     </form>
 
@@ -66,7 +66,8 @@
   </footer>
 
   <script type="module" src="js/voces.js"></script>
-    <!-- Sesión del usuario en la cabecera (en todas las páginas) -->
+  <!-- Sesión del usuario en la cabecera (en todas las páginas) -->
   <script type="module" src="js/sesion.js"></script>
 </body>
+
 </html>

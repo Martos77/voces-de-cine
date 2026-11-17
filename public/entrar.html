@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <!-- Para que la página se adapte bien al móvil -->
@@ -12,22 +13,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
+
 <body>
   <!-- Barra de navegación común a todas las páginas -->
   <header class="cabecera">
     <a class="marca" href="index.html">
       <!-- Icono de onda de voz, dibujado con líneas (SVG) -->
-      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" aria-hidden="true">
-        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6"/>
+      <svg class="marca__icono" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" aria-hidden="true">
+        <path d="M3 12v4M7 9v10M11 5v18M15 9v10M19 6v16M23 11v6" />
       </svg>
       <span>Voces <span class="marca__acento">de Cine</span></span>
     </a>
     <nav aria-label="Principal">
       <a href="catalogo.html">Películas</a>
       <a href="voces.html">Voces</a>
-      <!-- Sección que se añadirá más adelante -->
-      <span class="cabecera__pronto" title="Próximamente">Conexiones</span>
+      <a href="conexiones.html">Conexiones</a>
     </nav>
   </header>
 
@@ -74,8 +75,8 @@
         </div>
         <div class="campo">
           <label for="registro-contrasena">Contraseña</label>
-          <input id="registro-contrasena" name="contrasena" type="password" minlength="8"
-                 autocomplete="new-password" aria-describedby="ayuda-contrasena" required>
+          <input id="registro-contrasena" name="contrasena" type="password" minlength="8" autocomplete="new-password"
+            aria-describedby="ayuda-contrasena" required>
           <p class="campo__ayuda" id="ayuda-contrasena">Mínimo 8 caracteres.</p>
         </div>
 
@@ -101,4 +102,5 @@
 
   <script type="module" src="js/entrar.js"></script>
 </body>
+
 </html>
